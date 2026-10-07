@@ -8,8 +8,8 @@
         body { font-family: system-ui, -apple-system, sans-serif; background-color: #f3f4f6; margin: 0; padding: 20px; color: #1f2937; }
         .max { max-width: 1000px; margin: 0 auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .hidden { display: none !important; }
-        input, button, textarea { padding: 10px; font-size: 14px; border: 1px solid #d1d5db; border-radius: 6px; box-sizing: border-box; }
-        input { width: 100%; margin-bottom: 12px; }
+        input, button, textarea, select { padding: 10px; font-size: 14px; border: 1px solid #d1d5db; border-radius: 6px; box-sizing: border-box; }
+        input, select { width: 100%; margin-bottom: 12px; }
         textarea { width: 100%; resize: vertical; min-height: 80px; font-family: system-ui, -apple-system, sans-serif; }
         button { background-color: #2563eb; color: white; border: none; font-weight: bold; cursor: pointer; transition: background 0.2s; }
         button:hover { background-color: #1d4ed8; }
@@ -52,7 +52,7 @@
         <div class="flex" style="border-bottom: 1px solid #e5e7eb; padding-bottom: 15px; margin-bottom: 20px;">
             <h1 style="font-size: 20px; margin: 0;">📦 Control de Stock</h1>
             <div>
-                <span id="userDisplay" style="font-size: 12px; font-weight: bold; background: #eff6ff; color: #1d4ed8; padding: 6px 12px; border-radius: 20px; border: 1px solid #bfdbfe; margin-right: 8px;">👤</span>
+                <span id="userDisplay" style="font-size: 12px; font-weight: bold; background: #eff6ff; color: #1d4ed8; padding: 6px 12px; border-radius: 20px; border: 1px solid #bfdbfe; margin-right: 10px;">👤 Usuario</span>
                 <button onclick="cambiarUsuario()" style="background: none; color: #dc2626; text-decoration: underline; padding: 0; font-size: 12px;">Cambiar</button>
             </div>
         </div>
@@ -115,6 +115,12 @@
             <p style="color: #6b7280; margin-bottom: 15px;">Producto: <strong id="modalProductName"></strong></p>
             <label style="font-size: 12px; font-weight: bold; color: #4b5563; display: block; margin-bottom: 8px;">¿Por qué se descuenta stock?</label>
             <textarea id="comentarioDescuento" placeholder="Ej: Producto dañado, pérdida en inventario, devolución del cliente..."></textarea>
+
+            <label style="font-size: 12px; font-weight: bold; color: #4b5563; display: block; margin-top: 15px; margin-bottom: 8px;">Tienda</label>
+            <select id="tiendaDestino">
+                <option value="">Selecciona una tienda</option>
+            </select>
+
             <div class="modal-buttons">
                 <button class="btn-cancel" onclick="cerrarModal()">Cancelar</button>
                 <button onclick="confirmarDescuento()">Confirmar Descuento</button>
@@ -138,6 +144,106 @@
             measurementId: "G-YRBRV377PP"
         };
 
+        const tiendas = [
+            "SERRANO",
+            "PRINCIPE",
+            "PESETA",
+            "SILVANO",
+            "SANSE",
+            "ALBUFERA",
+            "SANCHINARRO",
+            "VALLEJO",
+            "GETAFE EL BERCIAL",
+            "ALCORCON NORTE",
+            "MOSTOLES NORTE",
+            "ANTRACITA",
+            "SUECIA",
+            "TORREJON",
+            "GALILEO",
+            "LEGANES",
+            "FUENLABRADA",
+            "ALCALA JOSE MARIA PEREDA",
+            "TOLEDO",
+            "VILLALBA",
+            "GETAFE LOS MOLINOS",
+            "PALACIO",
+            "LAS ROZAS",
+            "CUENCA",
+            "TELESFORO",
+            "VALLADOLID RECOLETOS",
+            "SABADELL",
+            "DIAGONAL",
+            "ZARAGOZA DELICIAS",
+            "ALCOBENDAS",
+            "ZARAGOZA CASCO ANTIGUO",
+            "GENERAL RICARDOS",
+            "LOS YEBENES",
+            "LEON",
+            "BURGOS",
+            "ALCALA LOPE DE FIGUEROA",
+            "GIJON ESTE",
+            "MARQUES DE VIANA",
+            "BILBAO",
+            "ORCASITAS",
+            "TARRASA",
+            "VALDEMORO",
+            "VALDERREBOLLO",
+            "SICILIA",
+            "GIJON SUR",
+            "POZUELO",
+            "SALAMANCA",
+            "CERRO MINGUETE",
+            "CORTES CATALANAS",
+            "ALCORCON SUR",
+            "ISABEL COLBRAND",
+            "MOSTOLES SUR",
+            "BADALONA",
+            "MAJADAHONDA",
+            "ZARAGOZA LA JOTA",
+            "DIAMANTE",
+            "PERIS & VALERO",
+            "FABRA",
+            "PARIS",
+            "ARTURO SORIA",
+            "REINA VICTORIA",
+            "HOSPITALET",
+            "COSLADA",
+            "PESET",
+            "MUNTANER",
+            "SARRIÀ",
+            "BLASCO IBÁÑEZ",
+            "USERA",
+            "TRES FORQUES",
+            "CORNELLA",
+            "RIVAS",
+            "PARLA CENTRO",
+            "SANT ADRIÀ",
+            "TOMARES",
+            "REPUBLICA ARGENTINA",
+            "MORATALAZ",
+            "SEVILLA ESTE",
+            "DOS HERMANAS",
+            "SAN CIPRIANO",
+            "VALLECAS DK",
+            "GUADALAJARA",
+            "Oviedo General Elorza",
+            "Zaragoza Las Fuentes",
+            "Sevilla Nervión",
+            "BILBAO ABANDO",
+            "SANTANDER CAZOÑA",
+            "Tres Cantos",
+            "Torrevieja",
+            "Santander Puerto",
+            "Aguadulce",
+            "Benidorm",
+            "Molins de Rei",
+            "Logroño",
+            "Vitoria",
+            "Foodtruck3",
+            "Massanassa",
+            "Donosti"
+        ];
+
         let db;
         try {
             const app = initializeApp(firebaseConfig);
@@ -153,9 +259,15 @@
         const inventoryTable = document.getElementById('inventoryTable');
         const logsContainer = document.getElementById('logsContainer');
         const comentarioModal = document.getElementById('comentarioModal');
+        const tiendaSelect = document.getElementById('tiendaDestino');
 
         let usuarioActual = localStorage.getItem('stock_user') || '';
         let descuentoPendiente = null;
+
+        function cargarTiendas() {
+            tiendaSelect.innerHTML = '<option value="">Selecciona una tienda</option>' +
+                tiendas.map((tienda) => `<option value="${tienda}">${tienda}</option>`).join('');
+        }
 
         if (usuarioActual && db) {
             mostrarApp();
@@ -181,6 +293,7 @@
             loginContainer.classList.add('hidden');
             appContainer.classList.remove('hidden');
             userDisplay.textContent = `👤 ${usuarioActual}`;
+            cargarTiendas();
             iniciarLogica();
         }
 
@@ -206,6 +319,7 @@
             descuentoPendiente = { id, nombreProd, stockActual };
             document.getElementById('modalProductName').textContent = nombreProd;
             document.getElementById('comentarioDescuento').value = '';
+            tiendaSelect.value = '';
             comentarioModal.classList.add('show');
         }
 
@@ -216,9 +330,15 @@
 
         window.confirmarDescuento = function() {
             const comentario = document.getElementById('comentarioDescuento').value.trim();
-            
+            const tienda = tiendaSelect.value.trim();
+
             if (!comentario) {
                 alert("Por favor, indica el motivo del descuento.");
+                return;
+            }
+
+            if (!tienda) {
+                alert("Selecciona la tienda a la que va destinado este stock.");
                 return;
             }
 
@@ -230,7 +350,7 @@
             try {
                 const prodRef = ref(db, 'inventario/' + id);
                 update(prodRef, { stock: nuevoStock });
-                registrarLog(`Salida (-1) en '${nombreProd}'. Stock final: ${nuevoStock}`, comentario);
+                registrarLog(`Salida (-1) en '${nombreProd}'. Stock final: ${nuevoStock}. Tienda: ${tienda}.`, comentario);
                 cerrarModal();
             } catch (error) {
                 console.error("Error al actualizar: ", error);
@@ -260,7 +380,7 @@
             window.cambiarStock = function(id, nombreProd, stockActual, cantidad) {
                 const nuevoStock = stockActual + cantidad;
                 if (nuevoStock < 0) return;
-                
+
                 // Si es un descuento (-1), mostrar modal
                 if (cantidad < 0) {
                     abrirModalDescuento(id, nombreProd, stockActual);
@@ -311,7 +431,7 @@
                             <button onclick="cambiarStock('${id}', '${prod.nombre.replace(/'/g, "\\'")}', ${prod.stock}, 1)" class="btn-green">+</button>
                         </td>
                         <td style="text-align: center;">
-                            <button onclick="eliminarProducto('${id}', '${prod.nombre.replace(/'/g, "\\'")}')" style="background: none; color: #ef4444; border: 1px solid #fca5a5; padding: 4px 8px; border-radius: 4px; cursor: pointer;">🗑️</button>
+                            <button onclick="eliminarProducto('${id}', '${prod.nombre.replace(/'/g, "\\'")}')" style="background: none; color: #ef4444; border: 1px solid #fca5a5; padding: 4px 8px; border-radius: 4px; cursor: pointer;">Eliminar</button>
                         </td>
                     `;
                     inventoryTable.appendChild(tr);
