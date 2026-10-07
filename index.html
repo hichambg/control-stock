@@ -55,9 +55,53 @@
             z-index: 1;
         }
 
+        .brand-banner {
+            width: 100%;
+            background: linear-gradient(90deg, #0a6f2c 0%, #0d7a32 25%, #0c6829 100%);
+            border-bottom: 4px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 8px 20px rgba(9, 92, 38, 0.18);
+        }
+
+        .brand-banner-inner {
+            max-width: 100%;
+            min-height: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 20px;
+            text-align: center;
+        }
+
+        .brand-banner-text {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .brand-banner-text strong {
+            display: block;
+            font-size: clamp(2rem, 4vw, 4rem);
+            font-weight: 900;
+            line-height: 0.9;
+            text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.12);
+        }
+
+        .brand-banner-text span {
+            display: block;
+            font-size: clamp(0.72rem, 1vw, 0.9rem);
+            font-weight: 700;
+            opacity: 0.95;
+            letter-spacing: 0.08em;
+        }
+
         /* LOGIN */
         #loginContainer {
-            min-height: 100vh;
+            min-height: calc(100vh - 90px);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -194,7 +238,7 @@
 
         /* APP */
         #appContainer {
-            min-height: 100vh;
+            min-height: calc(100vh - 90px);
             padding: 30px 20px;
         }
 
@@ -498,6 +542,14 @@
     </style>
 </head>
 <body>
+    <div class="brand-banner">
+        <div class="brand-banner-inner">
+            <div class="brand-banner-text">
+                <strong>PAPAJOHNS</strong>
+                <span>Mejores Ingredientes. Mejor Pizza.</span>
+            </div>
+        </div>
+    </div>
 
     <!-- LOGIN -->
     <div id="loginContainer" class="container">
@@ -812,9 +864,9 @@
                         <td>${prod.nombre}</td>
                         <td style="text-align: center;"><span class="stock-value">${prod.stock}</span></td>
                         <td style="text-align: center;">
-                            <button onclick="cambiarStock('${id}', '${prod.nombre.replace(/'/g, "\\'")}', ${prod.stock}, -1)" class="btn-danger" style="width: auto; padding: 8px 12px; margin-right: 6px;">-</button>
-                            <button onclick="cambiarStock('${id}', '${prod.nombre.replace(/'/g, "\\'")}', ${prod.stock}, 1)" class="btn-success" style="width: auto; padding: 8px 12px; margin-right: 6px;">+</button>
-                            <button onclick="eliminarProducto('${id}', '${prod.nombre.replace(/'/g, "\\'")}')" style="background: none; color: #dc2626; border: 2px solid #fca5a5; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 11px;">Eliminar</button>
+                            <button onclick="cambiarStock('${id}', '${prod.nombre.replace(/'/g, "\\'")}', ${prod.stock}, -1)" class="btn-danger" style="width: auto; padding: 8px 12px; margin-right: 8px;">-1</button>
+                            <button onclick="cambiarStock('${id}', '${prod.nombre.replace(/'/g, "\\'")}', ${prod.stock}, 1)" class="btn-success" style="width: auto; padding: 8px 12px; margin-right: 8px;">+1</button>
+                            <button onclick="eliminarProducto('${id}', '${prod.nombre.replace(/'/g, "\\'")}')" style="background: none; color: #dc2626; border: 2px solid #fca5a5; padding: 8px 12px; border-radius: 8px; width: auto;">Eliminar</button>
                         </td>
                     `;
                     inventoryTable.appendChild(tr);
