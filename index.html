@@ -8,8 +8,9 @@
         body { font-family: system-ui, -apple-system, sans-serif; background-color: #f3f4f6; margin: 0; padding: 20px; color: #1f2937; }
         .max { max-width: 1000px; margin: 0 auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .hidden { display: none !important; }
-        input, button { padding: 10px; font-size: 14px; border: 1px solid #d1d5db; border-radius: 6px; box-sizing: border-box; }
+        input, button, textarea { padding: 10px; font-size: 14px; border: 1px solid #d1d5db; border-radius: 6px; box-sizing: border-box; }
         input { width: 100%; margin-bottom: 12px; }
+        textarea { width: 100%; resize: vertical; min-height: 80px; font-family: system-ui, -apple-system, sans-serif; }
         button { background-color: #2563eb; color: white; border: none; font-weight: bold; cursor: pointer; transition: background 0.2s; }
         button:hover { background-color: #1d4ed8; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
@@ -23,6 +24,14 @@
         .btn-green:hover { background-color: #059669; }
         .log-box { background: #f9fafb; padding: 10px; border-radius: 6px; border: 1px solid #e5e7eb; max-height: 350px; overflow-y: auto; font-size: 12px; }
         .log-item { background: white; padding: 8px; margin-bottom: 8px; border-radius: 4px; border: 1px solid #e5e7eb; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 1000; align-items: center; justify-content: center; }
+        .modal.show { display: flex; }
+        .modal-content { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2); max-width: 500px; width: 90%; }
+        .modal-header { font-size: 18px; font-weight: bold; margin-bottom: 15px; color: #1f2937; }
+        .modal-buttons { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+        .modal-buttons button { width: auto; padding: 10px 20px; }
+        .btn-cancel { background-color: #6b7280 !important; }
+        .btn-cancel:hover { background-color: #4b5563 !important; }
     </style>
 </head>
 <body>
@@ -43,7 +52,7 @@
         <div class="flex" style="border-bottom: 1px solid #e5e7eb; padding-bottom: 15px; margin-bottom: 20px;">
             <h1 style="font-size: 20px; margin: 0;">📦 Control de Stock</h1>
             <div>
-                <span id="userDisplay" style="font-size: 12px; font-weight: bold; background: #eff6ff; color: #1d4ed8; padding: 6px 12px; border-radius: 20px; border: 1px solid #bfdbfe; margin-right: 10px;"></span>
+                <span id="userDisplay" style="font-size: 12px; font-weight: bold; background: #eff6ff; color: #1d4ed8; padding: 6px 12px; border-radius: 20px; border: 1px solid #bfdbfe; margin-right: 8px;">👤</span>
                 <button onclick="cambiarUsuario()" style="background: none; color: #dc2626; text-decoration: underline; padding: 0; font-size: 12px;">Cambiar</button>
             </div>
         </div>
@@ -99,6 +108,20 @@
         </div>
     </div>
 
+    <!-- MODAL DE COMENTARIO PARA DESCUENTO -->
+    <div id="comentarioModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">📝 Motivo del Descuento</div>
+            <p style="color: #6b7280; margin-bottom: 15px;">Producto: <strong id="modalProductName"></strong></p>
+            <label style="font-size: 12px; font-weight: bold; color: #4b5563; display: block; margin-bottom: 8px;">¿Por qué se descuenta stock?</label>
+            <textarea id="comentarioDescuento" placeholder="Ej: Producto dañado, pérdida en inventario, devolución del cliente..."></textarea>
+            <div class="modal-buttons">
+                <button class="btn-cancel" onclick="cerrarModal()">Cancelar</button>
+                <button onclick="confirmarDescuento()">Confirmar Descuento</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Script de Firebase Realtime Database -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -129,8 +152,10 @@
         const userDisplay = document.getElementById('userDisplay');
         const inventoryTable = document.getElementById('inventoryTable');
         const logsContainer = document.getElementById('logsContainer');
+        const comentarioModal = document.getElementById('comentarioModal');
 
         let usuarioActual = localStorage.getItem('stock_user') || '';
+        let descuentoPendiente = null;
 
         if (usuarioActual && db) {
             mostrarApp();
@@ -159,17 +184,56 @@
             iniciarLogica();
         }
 
-        function registrarLog(accion) {
+        function registrarLog(accion, comentario = '') {
             try {
                 const logsRef = ref(db, 'historial');
                 const nuevoLogRef = push(logsRef);
+                let detalle = accion;
+                if (comentario) {
+                    detalle += ` | Nota: ${comentario}`;
+                }
                 set(nuevoLogRef, {
                     usuario: usuarioActual,
-                    detalle: accion,
+                    detalle: detalle,
                     fecha: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
                 });
             } catch (e) {
                 console.error("Error al guardar historial: ", e);
+            }
+        }
+
+        window.abrirModalDescuento = function(id, nombreProd, stockActual) {
+            descuentoPendiente = { id, nombreProd, stockActual };
+            document.getElementById('modalProductName').textContent = nombreProd;
+            document.getElementById('comentarioDescuento').value = '';
+            comentarioModal.classList.add('show');
+        }
+
+        window.cerrarModal = function() {
+            comentarioModal.classList.remove('show');
+            descuentoPendiente = null;
+        }
+
+        window.confirmarDescuento = function() {
+            const comentario = document.getElementById('comentarioDescuento').value.trim();
+            
+            if (!comentario) {
+                alert("Por favor, indica el motivo del descuento.");
+                return;
+            }
+
+            if (!descuentoPendiente) return;
+
+            const { id, nombreProd, stockActual } = descuentoPendiente;
+            const nuevoStock = stockActual - 1;
+
+            try {
+                const prodRef = ref(db, 'inventario/' + id);
+                update(prodRef, { stock: nuevoStock });
+                registrarLog(`Salida (-1) en '${nombreProd}'. Stock final: ${nuevoStock}`, comentario);
+                cerrarModal();
+            } catch (error) {
+                console.error("Error al actualizar: ", error);
             }
         }
 
@@ -196,8 +260,15 @@
             window.cambiarStock = function(id, nombreProd, stockActual, cantidad) {
                 const nuevoStock = stockActual + cantidad;
                 if (nuevoStock < 0) return;
-                const tipo = cantidad > 0 ? `Entrada (+${cantidad})` : `Salida (${cantidad})`;
+                
+                // Si es un descuento (-1), mostrar modal
+                if (cantidad < 0) {
+                    abrirModalDescuento(id, nombreProd, stockActual);
+                    return;
+                }
 
+                // Si es una entrada (+1), hacer directamente sin comentario
+                const tipo = `Entrada (+${cantidad})`;
                 try {
                     const prodRef = ref(db, 'inventario/' + id);
                     update(prodRef, { stock: nuevoStock });
@@ -240,7 +311,7 @@
                             <button onclick="cambiarStock('${id}', '${prod.nombre.replace(/'/g, "\\'")}', ${prod.stock}, 1)" class="btn-green">+</button>
                         </td>
                         <td style="text-align: center;">
-                            <button onclick="eliminarProducto('${id}', '${prod.nombre.replace(/'/g, "\\'")}')" style="background: none; color: #ef4444; border: 1px solid #fca5a5; padding: 4px 8px; font-size: 12px;">Eliminar</button>
+                            <button onclick="eliminarProducto('${id}', '${prod.nombre.replace(/'/g, "\\'")}')" style="background: none; color: #ef4444; border: 1px solid #fca5a5; padding: 4px 8px; border-radius: 4px; cursor: pointer;">🗑️</button>
                         </td>
                     `;
                     inventoryTable.appendChild(tr);
