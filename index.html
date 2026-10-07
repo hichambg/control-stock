@@ -3,362 +3,601 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Control de Stock en Tiempo Real</title>
+    <title>Control de Stock - Gestión Empresarial</title>
     <style>
         :root {
-            --bg: #f0fdf4;
-            --panel: #ffffff;
-            --panel-soft: #f7fdf8;
             --primary: #15803d;
-            --primary-dark: #127a31;
-            --primary-soft: #dcfce7;
-            --success: #16a34a;
-            --danger: #ef4444;
-            --danger-dark: #dc2626;
-            --muted: #64748b;
+            --primary-dark: #0f6635;
+            --primary-light: #16a34a;
+            --bg: #f0fdf4;
+            --bg-secondary: #ecfdf5;
+            --panel: #ffffff;
+            --panel-soft: #f8fbf9;
             --text: #0f172a;
+            --text-muted: #64748b;
             --border: #d1f5e3;
-            --shadow: 0 12px 35px rgba(21, 128, 61, 0.12);
+            --shadow-sm: 0 2px 8px rgba(21, 128, 61, 0.08);
+            --shadow-md: 0 12px 35px rgba(21, 128, 61, 0.12);
+            --shadow-lg: 0 24px 60px rgba(21, 128, 61, 0.18);
         }
 
         * { box-sizing: border-box; }
 
-        body {
-            font-family: Inter, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background: linear-gradient(180deg, #ecfdf5 0%, var(--bg) 100%);
+        html, body {
             margin: 0;
-            padding: 28px 18px;
-            color: var(--text);
+            padding: 0;
+            height: 100%;
         }
 
-        .max {
-            max-width: 1200px;
-            margin: 0 auto;
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif;
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg) 100%);
+            color: var(--text);
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 50%, rgba(22, 163, 74, 0.05) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(21, 128, 61, 0.03) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* LOGIN */
+        #loginContainer {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 480px;
             background: var(--panel);
-            padding: 28px 26px;
-            border-radius: 18px;
-            box-shadow: var(--shadow);
-            border: 1px solid rgba(21, 128, 61, 0.16);
+            border-radius: 24px;
+            padding: 50px 40px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid rgba(21, 128, 61, 0.1);
+            backdrop-filter: blur(10px);
         }
 
-        .hidden { display: none !important; }
+        .login-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
 
-        input, button, textarea, select {
-            padding: 11px 12px;
+        .login-header h1 {
+            font-size: 32px;
+            font-weight: 800;
+            margin: 0 0 10px 0;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+        }
+
+        .login-header p {
+            color: var(--text-muted);
+            margin: 0;
             font-size: 14px;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            box-sizing: border-box;
-            transition: all 0.2s ease;
+            font-weight: 500;
         }
 
-        input, select {
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        input, select, textarea {
             width: 100%;
-            margin-bottom: 12px;
-            background: #fff;
-            color: var(--text);
-        }
-
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: rgba(21, 128, 61, 0.6);
-            box-shadow: 0 0 0 4px rgba(21, 128, 61, 0.08);
-        }
-
-        textarea {
-            width: 100%;
-            resize: vertical;
-            min-height: 90px;
+            padding: 14px 16px;
+            font-size: 15px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            transition: all 0.3s ease;
             font-family: inherit;
             background: #fff;
             color: var(--text);
         }
 
+        input:hover, select:hover, textarea:hover {
+            border-color: rgba(21, 128, 61, 0.3);
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 8px rgba(22, 163, 74, 0.08);
+            background: #fafffe;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 110px;
+        }
+
         button {
-            background: linear-gradient(180deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white;
-            border: none;
+            width: 100%;
+            padding: 14px 20px;
+            font-size: 15px;
             font-weight: 700;
+            border: none;
+            border-radius: 12px;
             cursor: pointer;
-            transition: transform 0.15s ease, box-shadow 0.2s ease, opacity 0.2s ease;
-            box-shadow: 0 8px 18px rgba(21, 128, 61, 0.22);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+            color: white;
+            box-shadow: 0 8px 20px rgba(21, 128, 61, 0.25);
         }
 
         button:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 10px 24px rgba(21, 128, 61, 0.26);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(21, 128, 61, 0.35);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: var(--text-muted);
+            box-shadow: 0 8px 20px rgba(100, 116, 139, 0.15);
+        }
+
+        .btn-secondary:hover {
+            background: #475569;
+            box-shadow: 0 12px 30px rgba(100, 116, 139, 0.25);
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            box-shadow: 0 8px 20px rgba(239, 68, 68, 0.2);
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+        }
+
+        #loginError {
+            color: #dc2626;
+            font-size: 13px;
+            text-align: center;
+            margin-top: 12px;
+        }
+
+        /* APP */
+        #appContainer {
+            min-height: 100vh;
+            padding: 30px 20px;
+        }
+
+        .app-wrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 35px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .header h1 {
+            font-size: 36px;
+            font-weight: 800;
+            margin: 0;
+            color: var(--primary);
+            letter-spacing: -1px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 800;
+            background: linear-gradient(135deg, rgba(22, 163, 74, 0.1) 0%, rgba(21, 128, 61, 0.05) 100%);
+            color: var(--primary);
+            padding: 10px 16px;
+            border-radius: 999px;
+            border: 2px solid rgba(21, 128, 61, 0.15);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-change {
+            background: none;
+            color: #dc2626;
+            border: 2px solid #fca5a5;
+            padding: 8px 14px;
+            font-size: 12px;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        .btn-change:hover {
+            background: rgba(239, 68, 68, 0.05);
+            border-color: #ef4444;
+        }
+
+        .form-section {
+            background: var(--panel);
+            border-radius: 18px;
+            padding: 28px;
+            margin-bottom: 28px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid rgba(21, 128, 61, 0.08);
+        }
+
+        .form-section h3 {
+            margin: 0 0 20px 0;
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--primary);
+            letter-spacing: -0.3px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 360px;
+            gap: 28px;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 10px;
-            border-radius: 12px;
+            background: var(--panel);
+            border-radius: 14px;
             overflow: hidden;
-            background: #fff;
+            box-shadow: var(--shadow-sm);
         }
 
-        th, td {
-            padding: 13px 12px;
+        thead tr {
+            background: linear-gradient(90deg, var(--panel-soft) 0%, var(--bg) 100%);
+            border-bottom: 2px solid var(--border);
+        }
+
+        th {
+            padding: 16px 14px;
             text-align: left;
+            font-size: 11px;
+            font-weight: 900;
+            color: var(--primary);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 16px 14px;
             border-bottom: 1px solid #edf2f7;
             font-size: 14px;
         }
 
-        th {
-            background: var(--panel-soft);
-            font-size: 11px;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            color: var(--primary);
-            font-weight: 800;
-            border-color: var(--border);
-        }
-
         tbody tr:hover {
-            background: #f8fdf9;
+            background: var(--panel-soft);
         }
 
-        .flex {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 14px;
+        tbody tr:last-child td {
+            border-bottom: none;
         }
 
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 14px;
-            background: linear-gradient(180deg, #f7fdf8, #f0fef6);
-            padding: 18px;
-            border-radius: 16px;
-            margin-bottom: 22px;
-            border: 1px solid var(--border);
+        .stock-value {
+            font-weight: 900;
+            font-size: 18px;
+            color: var(--primary-light);
         }
 
-        .btn-red {
-            background: linear-gradient(180deg, #ef4444 0%, #dc2626 100%);
-            padding: 6px 12px;
-            box-shadow: none;
+        .log-container {
+            background: var(--panel);
+            border-radius: 18px;
+            padding: 28px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid rgba(21, 128, 61, 0.08);
         }
 
-        .btn-red:hover {
-            background: #dc2626;
-        }
-
-        .btn-green {
-            background: linear-gradient(180deg, var(--success) 0%, var(--primary) 100%);
-            padding: 6px 12px;
-            box-shadow: none;
-        }
-
-        .btn-green:hover {
-            background: var(--primary);
+        .log-container h3 {
+            margin: 0 0 20px 0;
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--primary);
+            letter-spacing: -0.3px;
         }
 
         .log-box {
-            background: linear-gradient(180deg, #f7fdf8 0%, #f0fef6 100%);
-            padding: 12px;
-            border-radius: 14px;
-            border: 1px solid var(--border);
-            max-height: 380px;
+            max-height: 500px;
             overflow-y: auto;
-            font-size: 12px;
+            padding-right: 8px;
+        }
+
+        .log-box::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .log-box::-webkit-scrollbar-track {
+            background: var(--panel-soft);
+            border-radius: 10px;
+        }
+
+        .log-box::-webkit-scrollbar-thumb {
+            background: rgba(21, 128, 61, 0.3);
+            border-radius: 10px;
+        }
+
+        .log-box::-webkit-scrollbar-thumb:hover {
+            background: rgba(21, 128, 61, 0.5);
         }
 
         .log-item {
-            background: white;
-            padding: 10px 11px;
-            margin-bottom: 9px;
-            border-radius: 10px;
-            border: 1px solid var(--border);
+            background: linear-gradient(135deg, rgba(22, 163, 74, 0.04) 0%, rgba(21, 128, 61, 0.02) 100%);
+            padding: 14px;
+            margin-bottom: 12px;
+            border-radius: 12px;
+            border-left: 4px solid var(--primary-light);
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .log-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .log-user {
+            font-weight: 800;
+            color: var(--primary);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .log-time {
+            color: var(--text-muted);
+            font-size: 11px;
+        }
+
+        .log-detail {
+            color: var(--text);
         }
 
         .modal {
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(15, 23, 42, 0.52);
-            z-index: 1000;
+            background: rgba(15, 23, 42, 0.6);
+            z-index: 2000;
             align-items: center;
             justify-content: center;
             padding: 20px;
+            backdrop-filter: blur(4px);
         }
 
-        .modal.show { display: flex; }
+        .modal.show {
+            display: flex;
+        }
 
         .modal-content {
-            background: white;
-            padding: 24px 22px;
-            border-radius: 18px;
-            box-shadow: 0 24px 50px rgba(21, 128, 61, 0.22);
-            max-width: 520px;
+            background: var(--panel);
+            padding: 32px;
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+            max-width: 550px;
             width: 100%;
-            border: 1px solid rgba(21, 128, 61, 0.15);
+            border: 1px solid rgba(21, 128, 61, 0.12);
         }
 
         .modal-header {
-            font-size: 20px;
+            font-size: 24px;
             font-weight: 800;
-            margin-bottom: 14px;
+            margin-bottom: 8px;
             color: var(--primary);
+            letter-spacing: -0.5px;
+        }
+
+        .modal-subtitle {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 24px;
+            font-weight: 500;
         }
 
         .modal-buttons {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             justify-content: flex-end;
-            margin-top: 20px;
+            margin-top: 28px;
         }
 
         .modal-buttons button {
             width: auto;
-            padding: 11px 20px;
+            padding: 12px 24px;
+            font-size: 13px;
         }
 
-        .btn-cancel {
-            background: linear-gradient(180deg, #64748b 0%, #475569 100%) !important;
-            box-shadow: none !important;
+        .hidden {
+            display: none !important;
         }
 
-        .btn-cancel:hover {
-            background: #475569 !important;
+        @media (max-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
-        label {
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--primary);
-            display: block;
-            margin-bottom: 6px;
-        }
+        @media (max-width: 768px) {
+            .login-card {
+                padding: 40px 30px;
+            }
 
-        #loginContainer {
-            max-width: 440px;
-            margin-top: 70px;
-            padding: 34px 26px;
-        }
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
 
-        #loginContainer h2 {
-            text-align: center;
-            margin-bottom: 22px;
-            font-size: 30px;
-            color: var(--primary);
-        }
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
 
-        #userDisplay {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 12px;
-            font-weight: 800;
-            background: var(--primary-soft);
-            color: var(--primary);
-            padding: 8px 12px;
-            border-radius: 999px;
-            border: 1px solid rgba(21, 128, 61, 0.18);
-        }
+            .modal-buttons {
+                flex-direction: column-reverse;
+            }
 
-        #productForm button[type="submit"] {
-            height: 44px;
-            width: 100%;
-        }
-
-        @media (max-width: 760px) {
-            body { padding: 18px 12px; }
-            .max { padding: 18px 14px; }
-            .flex { flex-direction: column; align-items: flex-start; }
-            .modal-content { padding: 18px 16px; }
-            .modal-buttons { flex-direction: column-reverse; }
-            .modal-buttons button { width: 100%; }
+            .modal-buttons button {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
 
-    <div id="loginContainer" class="max">
-        <h2>👤 Identifícate</h2>
-        <div>
-            <label>Tu Nombre o Usuario</label>
-            <input type="text" id="nombreUsuario" placeholder="Escribe tu nombre">
-            <button onclick="iniciarSesion()" style="width: 100%;">Acceder al Inventario</button>
-            <p id="loginError" style="color: red; font-size: 12px; text-align: center; margin-top: 10px;"></p>
+    <!-- LOGIN -->
+    <div id="loginContainer" class="container">
+        <div class="login-card">
+            <div class="login-header">
+                <h1>📦 Control Stock</h1>
+                <p>Gestión Empresarial de Inventario</p>
+            </div>
+            <div class="form-group">
+                <label>Nombre de Usuario</label>
+                <input type="text" id="nombreUsuario" placeholder="Ingresa tu nombre">
+            </div>
+            <button onclick="iniciarSesion()">Acceder</button>
+            <p id="loginError"></p>
         </div>
     </div>
 
-    <div id="appContainer" class="max hidden">
-        <div class="flex" style="border-bottom: 1px solid var(--border); padding-bottom: 16px; margin-bottom: 20px;">
-            <h1 style="font-size: 28px; margin: 0; font-weight: 800; color: var(--primary);">📦 Control de Stock</h1>
-            <div>
-                <span id="userDisplay">👤 Usuario</span>
-                <button onclick="cambiarUsuario()" style="background: transparent; color: #dc2626; text-decoration: underline; padding: 0; font-size: 12px; box-shadow: none; margin-left: 10px;">Cambiar</button>
-            </div>
-        </div>
-
-        <form id="productForm" class="grid">
-            <div>
-                <label>Referencia</label>
-                <input type="text" id="ref" required placeholder="REF-001" style="margin-bottom:0;">
-            </div>
-            <div>
-                <label>Nombre del Producto</label>
-                <input type="text" id="nombre" required placeholder="Nombre del producto" style="margin-bottom:0;">
-            </div>
-            <div>
-                <label>Stock Inicial</label>
-                <input type="number" id="stock" required min="0" value="0" style="margin-bottom:0;">
-            </div>
-            <div style="display: flex; align-items: flex-end;">
-                <button type="submit">Añadir Producto</button>
-            </div>
-        </form>
-
-        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 22px;">
-            <div>
-                <h3 style="margin-top: 0; font-size: 18px; font-weight: 800; color: var(--primary);">Listado de Artículos</h3>
-                <div style="overflow-x: auto; border: 1px solid var(--border); border-radius: 14px; background: #fff;">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Ref</th>
-                                <th>Producto</th>
-                                <th style="text-align: center;">Stock</th>
-                                <th style="text-align: center;">Movimiento</th>
-                                <th style="text-align: center;">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="inventoryTable">
-                            <tr><td colspan="5" style="text-align: center; color: #9ca3af;">Cargando productos...</td></tr>
-                        </tbody>
-                    </table>
+    <!-- APP -->
+    <div id="appContainer" class="container hidden">
+        <div class="app-wrapper">
+            <div class="header">
+                <h1>📦 Control de Stock</h1>
+                <div class="user-info">
+                    <div class="user-badge" id="userDisplay">👤 Usuario</div>
+                    <button class="btn-change" onclick="cambiarUsuario()">Cambiar</button>
                 </div>
             </div>
 
-            <div>
-                <h3 style="margin-top: 0; font-size: 18px; font-weight: 800; color: var(--primary);">📋 Registro de Actividad</h3>
-                <div id="logsContainer" class="log-box">
-                    <p style="text-align: center; color: #9ca3af;">Sin actividad reciente.</p>
+            <div class="form-section">
+                <h3>Añadir Producto</h3>
+                <form id="productForm" class="form-grid">
+                    <div>
+                        <label>Referencia</label>
+                        <input type="text" id="ref" required placeholder="REF-001">
+                    </div>
+                    <div>
+                        <label>Nombre del Producto</label>
+                        <input type="text" id="nombre" required placeholder="Nombre del producto">
+                    </div>
+                    <div>
+                        <label>Stock Inicial</label>
+                        <input type="number" id="stock" required min="0" value="0">
+                    </div>
+                    <div style="display: flex; align-items: flex-end;">
+                        <button type="submit" style="margin: 0;">Añadir</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="main-grid">
+                <div class="form-section">
+                    <h3>Listado de Artículos</h3>
+                    <div style="overflow-x: auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Referencia</th>
+                                    <th>Producto</th>
+                                    <th style="text-align: center;">Stock</th>
+                                    <th style="text-align: center;">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inventoryTable">
+                                <tr><td colspan="4" style="text-align: center; padding: 30px; color: var(--text-muted);">Cargando productos...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="log-container">
+                    <h3>📋 Actividad</h3>
+                    <div class="log-box" id="logsContainer">
+                        <p style="text-align: center; color: var(--text-muted); padding: 20px 0;">Sin actividad reciente.</p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- MODAL -->
     <div id="comentarioModal" class="modal">
         <div class="modal-content">
-            <div class="modal-header">📝 Motivo del Descuento</div>
-            <p style="color: #475569; margin-bottom: 15px;">Producto: <strong id="modalProductName"></strong></p>
-            <label>¿Por qué se descuenta stock?</label>
-            <textarea id="comentarioDescuento" placeholder="Ej: Producto dañado, pérdida en inventario, devolución del cliente..."></textarea>
+            <div class="modal-header">📝 Registrar Salida</div>
+            <p class="modal-subtitle">Producto: <strong id="modalProductName"></strong></p>
 
-            <label style="margin-top: 15px;">Tienda</label>
-            <select id="tiendaDestino">
-                <option value="">Selecciona una tienda</option>
-            </select>
+            <div class="form-group">
+                <label>Motivo del Descuento</label>
+                <textarea id="comentarioDescuento" placeholder="Explica por qué se descuenta stock..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Tienda Destino</label>
+                <select id="tiendaDestino">
+                    <option value="">Selecciona una tienda</option>
+                </select>
+            </div>
 
             <div class="modal-buttons">
-                <button class="btn-cancel" onclick="cerrarModal()">Cancelar</button>
-                <button onclick="confirmarDescuento()">Confirmar Descuento</button>
+                <button class="btn-secondary" onclick="cerrarModal()">Cancelar</button>
+                <button class="btn-success" onclick="confirmarDescuento()">Confirmar</button>
             </div>
         </div>
     </div>
@@ -379,132 +618,46 @@
         };
 
         const tiendas = [
-            "SERRANO",
-            "PRINCIPE",
-            "PESETA",
-            "SILVANO",
-            "SANSE",
-            "ALBUFERA",
-            "SANCHINARRO",
-            "VALLEJO",
-            "GETAFE EL BERCIAL",
-            "ALCORCON NORTE",
-            "MOSTOLES NORTE",
-            "ANTRACITA",
-            "SUECIA",
-            "TORREJON",
-            "GALILEO",
-            "LEGANES",
-            "FUENLABRADA",
-            "ALCALA JOSE MARIA PEREDA",
-            "TOLEDO",
-            "VILLALBA",
-            "GETAFE LOS MOLINOS",
-            "PALACIO",
-            "LAS ROZAS",
-            "CUENCA",
-            "TELESFORO",
-            "VALLADOLID RECOLETOS",
-            "SABADELL",
-            "DIAGONAL",
-            "ZARAGOZA DELICIAS",
-            "ALCOBENDAS",
-            "ZARAGOZA CASCO ANTIGUO",
-            "GENERAL RICARDOS",
-            "LOS YEBENES",
-            "LEON",
-            "BURGOS",
-            "ALCALA LOPE DE FIGUEROA",
-            "GIJON ESTE",
-            "MARQUES DE VIANA",
-            "BILBAO",
-            "ORCASITAS",
-            "TARRASA",
-            "VALDEMORO",
-            "VALDERREBOLLO",
-            "SICILIA",
-            "GIJON SUR",
-            "POZUELO",
-            "SALAMANCA",
-            "CERRO MINGUETE",
-            "CORTES CATALANAS",
-            "ALCORCON SUR",
-            "ISABEL COLBRAND",
-            "MOSTOLES SUR",
-            "BADALONA",
-            "MAJADAHONDA",
-            "ZARAGOZA LA JOTA",
-            "DIAMANTE",
-            "PERIS & VALERO",
-            "FABRA",
-            "PARIS",
-            "ARTURO SORIA",
-            "REINA VICTORIA",
-            "HOSPITALET",
-            "COSLADA",
-            "PESET",
-            "MUNTANER",
-            "SARRIÀ",
-            "BLASCO IBÁÑEZ",
-            "USERA",
-            "TRES FORQUES",
-            "CORNELLA",
-            "RIVAS",
-            "PARLA CENTRO",
-            "SANT ADRIÀ",
-            "TOMARES",
-            "REPUBLICA ARGENTINA",
-            "MORATALAZ",
-            "SEVILLA ESTE",
-            "DOS HERMANAS",
-            "SAN CIPRIANO",
-            "VALLECAS DK",
-            "GUADALAJARA",
-            "Oviedo General Elorza",
-            "Zaragoza Las Fuentes",
-            "Sevilla Nervión",
-            "BILBAO ABANDO",
-            "SANTANDER CAZOÑA",
-            "Tres Cantos",
-            "Torrevieja",
-            "Santander Puerto",
-            "Aguadulce",
-            "Benidorm",
-            "Molins de Rei",
-            "Logroño",
-            "Vitoria",
-            "Foodtruck3",
-            "Massanassa",
-            "Donosti"
+            "SERRANO", "PRINCIPE", "PESETA", "SILVANO", "SANSE", "ALBUFERA", "SANCHINARRO", "VALLEJO",
+            "GETAFE EL BERCIAL", "ALCORCON NORTE", "MOSTOLES NORTE", "ANTRACITA", "SUECIA", "TORREJON",
+            "GALILEO", "LEGANES", "FUENLABRADA", "ALCALA JOSE MARIA PEREDA", "TOLEDO", "VILLALBA",
+            "GETAFE LOS MOLINOS", "PALACIO", "LAS ROZAS", "CUENCA", "TELESFORO", "VALLADOLID RECOLETOS",
+            "SABADELL", "DIAGONAL", "ZARAGOZA DELICIAS", "ALCOBENDAS", "ZARAGOZA CASCO ANTIGUO",
+            "GENERAL RICARDOS", "LOS YEBENES", "LEON", "BURGOS", "ALCALA LOPE DE FIGUEROA", "GIJON ESTE",
+            "MARQUES DE VIANA", "BILBAO", "ORCASITAS", "TARRASA", "VALDEMORO", "VALDERREBOLLO", "SICILIA",
+            "GIJON SUR", "POZUELO", "SALAMANCA", "CERRO MINGUETE", "CORTES CATALANAS", "ALCORCON SUR",
+            "ISABEL COLBRAND", "MOSTOLES SUR", "BADALONA", "MAJADAHONDA", "ZARAGOZA LA JOTA", "DIAMANTE",
+            "PERIS & VALERO", "FABRA", "PARIS", "ARTURO SORIA", "REINA VICTORIA", "HOSPITALET", "COSLADA",
+            "PESET", "MUNTANER", "SARRIÀ", "BLASCO IBÁÑEZ", "USERA", "TRES FORQUES", "CORNELLA", "RIVAS",
+            "PARLA CENTRO", "SANT ADRIÀ", "TOMARES", "REPUBLICA ARGENTINA", "MORATALAZ", "SEVILLA ESTE",
+            "DOS HERMANAS", "SAN CIPRIANO", "VALLECAS DK", "GUADALAJARA", "Oviedo General Elorza",
+            "Zaragoza Las Fuentes", "Sevilla Nervión", "BILBAO ABANDO", "SANTANDER CAZOÑA", "Tres Cantos",
+            "Torrevieja", "Santander Puerto", "Aguadulce", "Benidorm", "Molins de Rei", "Logroño", "Vitoria",
+            "Foodtruck3", "Massanassa", "Donosti"
         ];
 
-        let db;
-        try {
-            const app = initializeApp(firebaseConfig);
-            db = getDatabase(app);
-        } catch (err) {
-            console.error("Error al inicializar Firebase:", err);
-            document.getElementById('loginError').textContent = "Error de conexión con Firebase.";
-        }
-
-        const loginContainer = document.getElementById('loginContainer');
-        const appContainer = document.getElementById('appContainer');
-        const userDisplay = document.getElementById('userDisplay');
-        const inventoryTable = document.getElementById('inventoryTable');
-        const logsContainer = document.getElementById('logsContainer');
-        const comentarioModal = document.getElementById('comentarioModal');
-        const tiendaSelect = document.getElementById('tiendaDestino');
-
+        let db, loginContainer, appContainer, userDisplay, inventoryTable, logsContainer, comentarioModal, tiendaSelect;
         let usuarioActual = localStorage.getItem('stock_user') || '';
         let descuentoPendiente = null;
 
-        function cargarTiendas() {
-            tiendaSelect.innerHTML = '<option value="">Selecciona una tienda</option>' +
-                tiendas.map((tienda) => `<option value="${tienda}">${tienda}</option>`).join('');
-        }
+        function init() {
+            loginContainer = document.getElementById('loginContainer');
+            appContainer = document.getElementById('appContainer');
+            userDisplay = document.getElementById('userDisplay');
+            inventoryTable = document.getElementById('inventoryTable');
+            logsContainer = document.getElementById('logsContainer');
+            comentarioModal = document.getElementById('comentarioModal');
+            tiendaSelect = document.getElementById('tiendaDestino');
 
-        if (usuarioActual && db) {
-            mostrarApp();
+            try {
+                const app = initializeApp(firebaseConfig);
+                db = getDatabase(app);
+            } catch (err) {
+                console.error("Error Firebase:", err);
+                document.getElementById('loginError').textContent = "Error de conexión.";
+            }
+
+            if (usuarioActual && db) mostrarApp();
         }
 
         window.iniciarSesion = function() {
@@ -531,21 +684,25 @@
             iniciarLogica();
         }
 
+        function cargarTiendas() {
+            tiendaSelect.innerHTML = '<option value="">Selecciona una tienda</option>' +
+                tiendas.map(t => `<option value="${t}">${t}</option>`).join('');
+        }
+
         function registrarLog(accion, comentario = '') {
+            if (!db) return;
             try {
                 const logsRef = ref(db, 'historial');
                 const nuevoLogRef = push(logsRef);
                 let detalle = accion;
-                if (comentario) {
-                    detalle += ` | Nota: ${comentario}`;
-                }
+                if (comentario) detalle += ` | ${comentario}`;
                 set(nuevoLogRef, {
                     usuario: usuarioActual,
                     detalle: detalle,
                     fecha: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
                 });
             } catch (e) {
-                console.error("Error al guardar historial: ", e);
+                console.error("Error historial:", e);
             }
         }
 
@@ -567,15 +724,13 @@
             const tienda = tiendaSelect.value.trim();
 
             if (!comentario) {
-                alert("Por favor, indica el motivo del descuento.");
+                alert("Indica el motivo del descuento.");
                 return;
             }
-
             if (!tienda) {
-                alert("Selecciona la tienda a la que va destinado este stock.");
+                alert("Selecciona la tienda destino.");
                 return;
             }
-
             if (!descuentoPendiente) return;
 
             const { id, nombreProd, stockActual } = descuentoPendiente;
@@ -584,10 +739,10 @@
             try {
                 const prodRef = ref(db, 'inventario/' + id);
                 update(prodRef, { stock: nuevoStock });
-                registrarLog(`Salida (-1) en '${nombreProd}'. Stock final: ${nuevoStock}. Tienda: ${tienda}.`, comentario);
+                registrarLog(`Salida (-1) en '${nombreProd}'. Stock: ${nuevoStock}. Tienda: ${tienda}.`, comentario);
                 cerrarModal();
             } catch (error) {
-                console.error("Error al actualizar: ", error);
+                console.error("Error:", error);
             }
         }
 
@@ -620,13 +775,12 @@
                     return;
                 }
 
-                const tipo = `Entrada (+${cantidad})`;
                 try {
                     const prodRef = ref(db, 'inventario/' + id);
                     update(prodRef, { stock: nuevoStock });
-                    registrarLog(`Hizo ${tipo} en '${nombreProd}'. Stock final: ${nuevoStock}`);
+                    registrarLog(`Entrada (+${cantidad}) en '${nombreProd}'. Stock: ${nuevoStock}`);
                 } catch (error) {
-                    console.error("Error al actualizar: ", error);
+                    console.error("Error:", error);
                 }
             }
 
@@ -635,9 +789,9 @@
                     try {
                         const prodRef = ref(db, 'inventario/' + id);
                         remove(prodRef);
-                        registrarLog(`Eliminó el producto '${nombreProd}'`);
+                        registrarLog(`Eliminó '${nombreProd}'`);
                     } catch (error) {
-                        console.error("Error al eliminar: ", error);
+                        console.error("Error:", error);
                     }
                 }
             }
@@ -647,22 +801,20 @@
                 inventoryTable.innerHTML = "";
                 const data = snapshot.val();
                 if (!data) {
-                    inventoryTable.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #9ca3af; padding: 15px;">No hay productos registrados.</td></tr>`;
+                    inventoryTable.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 30px; color: var(--text-muted);">Sin productos registrados.</td></tr>`;
                     return;
                 }
                 Object.keys(data).forEach((id) => {
                     const prod = data[id];
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
-                        <td style="font-weight: 600;">${prod.referencia}</td>
+                        <td>${prod.referencia}</td>
                         <td>${prod.nombre}</td>
-                        <td style="text-align: center; font-weight: 800; font-size: 16px; color: var(--primary);">${prod.stock}</td>
+                        <td style="text-align: center;"><span class="stock-value">${prod.stock}</span></td>
                         <td style="text-align: center;">
-                            <button onclick="cambiarStock('${id}', '${prod.nombre.replace(/'/g, "\\'")}', ${prod.stock}, -1)" class="btn-red">-</button>
-                            <button onclick="cambiarStock('${id}', '${prod.nombre.replace(/'/g, "\\'")}', ${prod.stock}, 1)" class="btn-green" style="margin-left: 6px;">+</button>
-                        </td>
-                        <td style="text-align: center;">
-                            <button onclick="eliminarProducto('${id}', '${prod.nombre.replace(/'/g, "\\'")}')" style="background: none; color: #ef4444; border: 1px solid #fca5a5; padding: 7px 10px; border-radius: 8px; cursor: pointer; box-shadow: none;">Eliminar</button>
+                            <button onclick="cambiarStock('${id}', '${prod.nombre.replace(/'/g, "\\'")}', ${prod.stock}, -1)" class="btn-danger" style="width: auto; padding: 8px 12px; margin-right: 6px;">-</button>
+                            <button onclick="cambiarStock('${id}', '${prod.nombre.replace(/'/g, "\\'")}', ${prod.stock}, 1)" class="btn-success" style="width: auto; padding: 8px 12px; margin-right: 6px;">+</button>
+                            <button onclick="eliminarProducto('${id}', '${prod.nombre.replace(/'/g, "\\'")}')" style="background: none; color: #dc2626; border: 2px solid #fca5a5; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 11px;">Eliminar</button>
                         </td>
                     `;
                     inventoryTable.appendChild(tr);
@@ -674,24 +826,26 @@
                 logsContainer.innerHTML = "";
                 const data = snapshot.val();
                 if (!data) {
-                    logsContainer.innerHTML = `<p style="text-align: center; color: #9ca3af;">Sin actividad reciente.</p>`;
+                    logsContainer.innerHTML = `<p style="text-align: center; color: var(--text-muted); padding: 20px 0;">Sin actividad.</p>`;
                     return;
                 }
-                const logsArray = Object.values(data).reverse().slice(0, 15);
+                const logsArray = Object.values(data).reverse().slice(0, 20);
                 logsArray.forEach((log) => {
                     const div = document.createElement('div');
                     div.className = "log-item";
                     div.innerHTML = `
-                        <div style="display: flex; justify-content: space-between; color: #94a3b8; font-size: 10px; margin-bottom: 6px;">
-                            <span style="font-weight: 800; color: var(--primary);">${log.usuario}</span>
-                            <span>${log.fecha}</span>
+                        <div class="log-item-header">
+                            <span class="log-user">${log.usuario}</span>
+                            <span class="log-time">${log.fecha}</span>
                         </div>
-                        <div style="color: #334155;">${log.detalle}</div>
+                        <div class="log-detail">${log.detalle}</div>
                     `;
                     logsContainer.appendChild(div);
                 });
             });
         }
+
+        init();
     </script>
 </body>
 </html>
