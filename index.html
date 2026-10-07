@@ -57,51 +57,38 @@
 
         .brand-banner {
             width: 100%;
-            background: linear-gradient(90deg, #0a6f2c 0%, #0d7a32 25%, #0c6829 100%);
-            border-bottom: 4px solid rgba(255, 255, 255, 0.18);
-            box-shadow: 0 8px 20px rgba(9, 92, 38, 0.18);
-        }
-
-        .brand-banner-inner {
-            max-width: 100%;
-            min-height: 90px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 12px 20px;
+            background: #0a6f2c;
+            border-bottom: 3px solid #0c6829;
+            padding: 20px;
             text-align: center;
+            box-shadow: 0 4px 12px rgba(9, 92, 38, 0.15);
         }
 
         .brand-banner-text {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 2px;
-            color: #fff;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
+            margin: 0;
+            color: #ffffff;
         }
 
         .brand-banner-text strong {
             display: block;
-            font-size: clamp(2rem, 4vw, 4rem);
+            font-size: 32px;
             font-weight: 900;
-            line-height: 0.9;
-            text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.12);
+            letter-spacing: -0.5px;
+            margin: 0;
         }
 
         .brand-banner-text span {
             display: block;
-            font-size: clamp(0.72rem, 1vw, 0.9rem);
-            font-weight: 700;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-top: 4px;
             opacity: 0.95;
-            letter-spacing: 0.08em;
         }
 
         /* LOGIN */
         #loginContainer {
-            min-height: calc(100vh - 90px);
+            min-height: calc(100vh - 100px);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -238,7 +225,7 @@
 
         /* APP */
         #appContainer {
-            min-height: calc(100vh - 90px);
+            min-height: calc(100vh - 100px);
             padding: 30px 20px;
         }
 
@@ -543,11 +530,9 @@
 </head>
 <body>
     <div class="brand-banner">
-        <div class="brand-banner-inner">
-            <div class="brand-banner-text">
-                <strong>PAPAJOHNS</strong>
-                <span>Mejores Ingredientes. Mejor Pizza.</span>
-            </div>
+        <div class="brand-banner-text">
+            <strong>PAPAJOHNS</strong>
+            <span>Mejores Ingredientes. Mejor Pizza.</span>
         </div>
     </div>
 
