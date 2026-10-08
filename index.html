@@ -27,15 +27,9 @@
         }
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.03); }
-        ::-webkit-scrollbar-thumb { background: rgba(22, 163, 74, 0.3); border-radius: 9999px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(22, 163, 74, 0.5); }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-gradient-to-br from-brand-50 to-emerald-100 text-slate-800 dark:from-slate-900 dark:to-slate-950 dark:text-slate-100 min-h-screen transition-colors duration-300">
+<body class="text-slate-800 dark:text-slate-100 min-h-screen transition-colors duration-300">
 
     <!-- Toast Container -->
     <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
@@ -57,7 +51,7 @@
 
     <!-- LOGIN CONTAINER -->
     <main id="loginContainer" class="min-h-[calc(100vh-90px)] flex items-center justify-center p-4 relative z-10">
-        <div class="w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl p-8 sm:p-10 shadow-2xl border border-brand-500/10 backdrop-blur-xl">
+        <div class="w-full max-w-md bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl rounded-3xl p-8 sm:p-10 shadow-2xl border border-brand-500/10">
             <div class="text-center mb-8">
                 <div class="w-16 h-16 bg-brand-100 dark:bg-brand-900/40 text-brand-600 dark:text-brand-400 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4 shadow-inner">📦</div>
                 <h1 class="text-2xl font-black text-brand-600 dark:text-brand-400 tracking-tight">Control Stock</h1>
@@ -89,7 +83,7 @@
         <div class="max-w-7xl mx-auto space-y-6">
             
             <!-- Top App Bar -->
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-xl border border-brand-500/10 gap-4">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center bg-white/90 dark:bg-slate-900/90 backdrop-blur-md p-6 rounded-2xl shadow-xl border border-brand-500/10 gap-4">
                 <div>
                     <h1 class="text-3xl font-black text-brand-700 dark:text-brand-400 tracking-tight flex items-center gap-2">
                         <span>📦</span> Panel de Control
@@ -111,21 +105,21 @@
 
             <!-- Stats Quick Grid -->
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl shadow-lg border border-brand-500/10 flex items-center gap-4">
+                <div class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md p-5 rounded-2xl shadow-lg border border-brand-500/10 flex items-center gap-4">
                     <div class="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 rounded-xl flex items-center justify-center text-xl font-bold">📊</div>
                     <div>
                         <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Artículos</p>
                         <h4 id="statTotalItems" class="text-2xl font-black text-slate-800 dark:text-slate-100">0</h4>
                     </div>
                 </div>
-                <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl shadow-lg border border-brand-500/10 flex items-center gap-4">
+                <div class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md p-5 rounded-2xl shadow-lg border border-brand-500/10 flex items-center gap-4">
                     <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/40 text-blue-600 rounded-xl flex items-center justify-center text-xl font-bold">📦</div>
                     <div>
                         <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Stock Acumulado</p>
                         <h4 id="statTotalStock" class="text-2xl font-black text-slate-800 dark:text-slate-100">0</h4>
                     </div>
                 </div>
-                <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl shadow-lg border border-brand-500/10 flex items-center gap-4">
+                <div class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md p-5 rounded-2xl shadow-lg border border-brand-500/10 flex items-center gap-4">
                     <div class="w-12 h-12 bg-amber-100 dark:bg-amber-900/40 text-amber-600 rounded-xl flex items-center justify-center text-xl font-bold">⚠️</div>
                     <div>
                         <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Stock Crítico (&lt;5)</p>
@@ -135,7 +129,7 @@
             </div>
 
             <!-- Add Product Section -->
-            <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-xl border border-brand-500/10">
+            <div class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-2xl p-6 shadow-xl border border-brand-500/10">
                 <h3 class="text-lg font-extrabold text-brand-700 dark:text-brand-400 mb-4 flex items-center gap-2">
                     <span>➕</span> Añadir Nuevo Producto
                 </h3>
@@ -186,7 +180,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
                 
                 <!-- Inventory List Table -->
-                <div class="lg:col-span-3 bg-white dark:bg-slate-900 rounded-2xl p-5 shadow-xl border border-brand-500/15 flex flex-col min-w-0">
+                <div class="lg:col-span-3 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-2xl p-5 shadow-xl border border-brand-500/15 flex flex-col min-w-0">
                     <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4 mb-6">
                         <h3 class="text-lg font-extrabold text-brand-700 dark:text-brand-400 flex items-center gap-2">
                             <span>📋</span> Inventario Actual
@@ -207,6 +201,7 @@
                                 <select id="filterUbicacion" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold focus:border-brand-500 focus:outline-none transition">
                                     <option value="">Todas las ubicaciones</option>
                                     <option value="ALMACÉN">ALMACÉN</option>
+                                    <option value="ARMARIO">ARMARIO</option>
                                 </select>
                             </div>
                             <div class="sm:w-36 flex-shrink-0">
@@ -242,7 +237,7 @@
                 </div>
 
                 <!-- Activity Log Sidebar -->
-                <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-xl border border-brand-500/15 flex flex-col">
+                <div class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-2xl p-6 shadow-xl border border-brand-500/15 flex flex-col">
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="text-lg font-extrabold text-brand-700 dark:text-brand-400 flex items-center gap-2">
                             <span>⚡</span> Actividad Reciente
@@ -260,7 +255,7 @@
         </div>
     </div>
 
-    <!-- MODAL DESCUENTO (salida de stock con motivo y tienda) -->
+    <!-- MODAL DESCUENTO -->
     <div id="comentarioModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
         <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl border border-brand-500/20">
             <h3 class="text-xl font-black text-brand-700 dark:text-brand-400 mb-1">📝 Registrar Salida de Stock</h3>
@@ -323,574 +318,7 @@
         </div>
     </div>
 
-    <!-- FIREBASE & LOGIC SCRIPT -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, push, set, update, remove, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyBwWhut9ALZuP5skWRT6RIBUR7hcf408Ks",
-            authDomain: "gestion-de-stock-ab0fe.firebaseapp.com",
-            databaseURL: "https://gestion-de-stock-ab0fe-default-rtdb.europe-west1.firebasedatabase.app",
-            projectId: "gestion-de-stock-ab0fe",
-            storageBucket: "gestion-de-stock-ab0fe.appspot.com",
-            messagingSenderId: "45302180887",
-            appId: "1:45302180887:web:12d0f6fe21eed0e5dc052",
-            measurementId: "G-YRBRV377PP"
-        };
-
-        const categoriasList = [
-            "Adaptador", "Altavoces", "Atena", "Auriculares Tienda", "Botonera",
-            "Cables", "Cajón", "Cargador", "Cascos oficina", "Duplicadores",
-            "Hubs", "Impresora Blaster", "Impresora Oficina", "Impresora Tickets",
-            "Kitchen", "Memorias", "Meraki", "Monitor", "ONT", "Pantalla",
-            "Pantalla Menuboard 40", "Portatil", "Ratones", "Router", "Seguridad",
-            "Servidor", "Switch", "Tablet", "Teclado", "Telefonos", "TPV", "UPS FoodTruck"
-        ];
-
-        const tiendas = [
-            "SERRANO", "PRINCIPE", "PESETA", "SILVANO", "SANSE", "ALBUFERA", "SANCHINARRO", "VALLEJO",
-            "GETAFE EL BERCIAL", "ALCORCON NORTE", "MOSTOLES NORTE", "ANTRACITA", "SUECIA", "TORREJON",
-            "GALILEO", "LEGANES", "FUENLABRADA", "ALCALA JOSE MARIA PEREDA", "TOLEDO", "VILLALBA",
-            "GETAFE LOS MOLINOS", "PALACIO", "LAS ROZAS", "CUENCA", "TELESFORO", "VALLADOLID RECOLETOS",
-            "SABADELL", "DIAGONAL", "ZARAGOZA DELICIAS", "ALCOBENDAS", "ZARAGOZA CASCO ANTIGUO",
-            "GENERAL RICARDOS", "LOS YEBENES", "LEON", "BURGOS", "ALCALA LOPE DE FIGUEROA", "GIJON ESTE",
-            "MARQUES DE VIANA", "BILBAO", "ORCASITAS", "TARRASA", "VALDEMORO", "VALDERREBOLLO", "SICILIA",
-            "GIJON SUR", "POZUELO", "SALAMANCA", "CERRO MINGUETE", "CORTES CATALANAS", "ALCORCON SUR",
-            "ISABEL COLBRAND", "MOSTOLES SUR", "BADALONA", "MAJADAHONDA", "ZARAGOZA LA JOTA", "DIAMANTE",
-            "PERIS & VALERO", "FABRA", "PARIS", "ARTURO SORIA", "REINA VICTORIA", "HOSPITALET", "COSLADA",
-            "PESET", "MUNTANER", "SARRIÀ", "BLASCO IBÁÑEZ", "USERA", "TRES FORQUES", "CORNELLA", "RIVAS",
-            "PARLA CENTRO", "SANT ADRIÀ", "TOMARES", "REPUBLICA ARGENTINA", "MORATALAZ", "SEVILLA ESTE",
-            "DOS HERMANAS", "SAN CIPRIANO", "VALLECAS DK", "GUADALAJARA", "Oviedo General Elorza",
-            "Zaragoza Las Fuentes", "Sevilla Nervión", "BILBAO ABANDO", "SANTANDER CAZOÑA", "Tres Cantos",
-            "Torrevieja", "Santander Puerto", "Aguadulce", "Benidorm", "Molins de Rei", "Logroño", "Vitoria",
-            "Foodtruck3", "Massanassa", "Donosti"
-        ];
-
-        let db, usuarioActual = localStorage.getItem('stock_user') || '';
-        let descuentoPendiente = null;
-        let inventarioGlobal = {};
-        let cantidadesFila = {}; // cantidad escrita en cada fila (se conserva al refrescar la tabla)
-
-        function leerCantidad(id) {
-            const n = parseInt(cantidadesFila[id], 10);
-            return Number.isFinite(n) && n > 0 ? n : 1;
-        }
-
-        function init() {
-            try {
-                const app = initializeApp(firebaseConfig);
-                db = getDatabase(app);
-            } catch (err) {
-                console.error("Error Firebase:", err);
-                document.getElementById('loginError').textContent = "Error de conexión con la base de datos.";
-            }
-
-            if (localStorage.getItem('theme') === 'dark') {
-                document.documentElement.classList.add('dark');
-                document.getElementById('darkModeIcon').textContent = '☀️';
-            }
-
-            document.getElementById('darkModeBtn').addEventListener('click', toggleDarkMode);
-            document.getElementById('btnLogin').addEventListener('click', iniciarSesion);
-            document.getElementById('btnChangeUser').addEventListener('click', cambiarUsuario);
-            document.getElementById('btnExport').addEventListener('click', exportarExcel);
-            document.getElementById('btnCancelModal').addEventListener('click', cerrarModal);
-            document.getElementById('btnConfirmModal').addEventListener('click', confirmarDescuento);
-            document.getElementById('searchInput').addEventListener('input', filtrarInventario);
-            document.getElementById('filterTipo').addEventListener('change', filtrarInventario);
-            document.getElementById('filterUbicacion').addEventListener('change', filtrarInventario);
-            document.getElementById('filterEstado').addEventListener('change', filtrarInventario);
-            document.getElementById('btnClearFilters').addEventListener('click', limpiarFiltros);
-            document.getElementById('btnClearLogs').addEventListener('click', abrirModalActividad);
-            document.getElementById('btnCancelarActividad').addEventListener('click', cerrarModalActividad);
-            document.getElementById('btnConfirmarActividad').addEventListener('click', confirmarReinicioActividad);
-
-            ['nombreUsuario', 'passwordUsuario', 'nombrePersonal'].forEach(id => {
-                document.getElementById(id).addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') iniciarSesion();
-                });
-            });
-
-            const inputUser = document.getElementById('nombreUsuario');
-            inputUser.addEventListener('input', (e) => {
-                const val = e.target.value.trim().toLowerCase();
-                const container = document.getElementById('nombrePersonalContainer');
-                if (val === 'tecnico') {
-                    container.classList.remove('hidden');
-                } else {
-                    container.classList.add('hidden');
-                }
-            });
-
-            if (usuarioActual && db) mostrarApp();
-        }
-
-        function toggleDarkMode() {
-            const html = document.documentElement;
-            const icon = document.getElementById('darkModeIcon');
-            if (html.classList.contains('dark')) {
-                html.classList.remove('dark');
-                localStorage.setItem('theme', 'light');
-                icon.textContent = '🌙';
-            } else {
-                html.classList.add('dark');
-                localStorage.setItem('theme', 'dark');
-                icon.textContent = '☀️';
-            }
-        }
-
-        function showToast(message, type = 'success') {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            const bgClass = type === 'success' ? 'bg-emerald-600' : (type === 'error' ? 'bg-red-600' : 'bg-slate-800');
-            toast.className = `${bgClass} text-white px-4 py-3 rounded-xl shadow-xl text-xs font-bold uppercase tracking-wider transition transform translate-y-2 opacity-0 pointer-events-auto flex items-center gap-2`;
-            toast.innerHTML = `<span>${type === 'success' ? '✅' : '⚠️'}</span> ${message}`;
-            container.appendChild(toast);
-            setTimeout(() => { toast.classList.remove('translate-y-2', 'opacity-0'); }, 50);
-            setTimeout(() => {
-                toast.classList.add('opacity-0', 'transition-opacity');
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
-        }
-
-        function iniciarSesion() {
-            const usuario = document.getElementById('nombreUsuario').value.trim();
-            const password = document.getElementById('passwordUsuario').value;
-            const nombrePersonal = document.getElementById('nombrePersonal').value.trim();
-            const errorElement = document.getElementById('loginError');
-
-            if (!usuario || !password) {
-                errorElement.textContent = "Por favor, introduce usuario y contraseña.";
-                return;
-            }
-
-            if (usuario.toLowerCase() === 'tecnico') {
-                if (password !== 'papainventario') {
-                    errorElement.textContent = "Contraseña incorrecta para Técnico.";
-                    return;
-                }
-                if (!nombrePersonal) {
-                    errorElement.textContent = "Por favor, introduce tu nombre personal.";
-                    return;
-                }
-                usuarioActual = `Técnico: ${nombrePersonal}`;
-            } else {
-                usuarioActual = usuario;
-            }
-
-            localStorage.setItem('stock_user', usuarioActual);
-            errorElement.textContent = "";
-            mostrarApp();
-        }
-
-        function cambiarUsuario() {
-            localStorage.removeItem('stock_user');
-            location.reload();
-        }
-
-        function mostrarApp() {
-            document.getElementById('loginContainer').classList.add('hidden');
-            document.getElementById('appContainer').classList.remove('hidden');
-            document.getElementById('userDisplay').textContent = `👤 ${usuarioActual}`;
-            
-            const tipoSelectForm = document.getElementById('tipoProducto');
-            tipoSelectForm.innerHTML = '<option value="">Selecciona categoría</option>' +
-                categoriasList.map(c => `<option value="${c}">${c}</option>`).join('');
-
-            const filterTipo = document.getElementById('filterTipo');
-            filterTipo.innerHTML = '<option value="">Todas las categorías</option>' +
-                categoriasList.map(c => `<option value="${c}">${c}</option>`).join('');
-
-            const tiendaSelect = document.getElementById('tiendaDestino');
-            tiendaSelect.innerHTML = '<option value="">Selecciona una tienda</option>' +
-                tiendas.map(t => `<option value="${t}">${t}</option>`).join('');
-
-            const ubicacionSelect = document.getElementById('ubicacionProducto');
-            ubicacionSelect.innerHTML = '<option value="">Selecciona ubicación</option><option value="ALMACÉN">ALMACÉN</option><option value="ARMARIO">ARMARIO</option>';
-
-            const filterUbicacion = document.getElementById('filterUbicacion');
-            filterUbicacion.innerHTML = '<option value="">Todas las ubicaciones</option><option value="ALMACÉN">ALMACÉN</option><option value="ARMARIO">ARMARIO</option>';
-
-            iniciarLogica();
-        }
-
-        function registrarLog(accion, comentario = '') {
-            if (!db) return;
-            try {
-                const logsRef = ref(db, 'historial');
-                const nuevoLogRef = push(logsRef);
-                let detalle = accion;
-                if (comentario) detalle += ` | Motivo: ${comentario}`;
-                set(nuevoLogRef, {
-                    usuario: usuarioActual,
-                    detalle: detalle,
-                    fecha: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
-                });
-            } catch (e) {
-                console.error("Error historial:", e);
-            }
-        }
-
-        function abrirModalActividad() {
-            document.getElementById('actividadModal').classList.remove('hidden');
-            document.getElementById('actividadModal').classList.add('flex');
-        }
-
-        function cerrarModalActividad() {
-            document.getElementById('actividadModal').classList.remove('flex');
-            document.getElementById('actividadModal').classList.add('hidden');
-        }
-
-        async function confirmarReinicioActividad() {
-            if (!db) return;
-            const boton = document.getElementById('btnConfirmarActividad');
-            boton.disabled = true;
-            boton.textContent = 'Vaciando...';
-            try {
-                const logsRef = ref(db, 'historial');
-                await remove(logsRef);
-                cerrarModalActividad();
-                showToast("Actividad reciente reiniciada con éxito");
-            } catch (error) {
-                console.error("Error al reiniciar la actividad:", error);
-                showToast("Error al reiniciar la actividad", "error");
-            } finally {
-                boton.disabled = false;
-                boton.textContent = 'Sí, vaciar';
-            }
-        }
-
-        function abrirModalDescuento(id, nombreProd, stockActual, cantidad) {
-            descuentoPendiente = { id, nombreProd, stockActual, cantidad };
-            document.getElementById('modalProductName').textContent = `${nombreProd} (−${cantidad})`;
-            document.getElementById('comentarioDescuento').value = '';
-            document.getElementById('tiendaDestino').value = '';
-            document.getElementById('comentarioModal').classList.remove('hidden');
-            document.getElementById('comentarioModal').classList.add('flex');
-        }
-
-        function cerrarModal() {
-            document.getElementById('comentarioModal').classList.remove('flex');
-            document.getElementById('comentarioModal').classList.add('hidden');
-            descuentoPendiente = null;
-        }
-
-        function confirmarDescuento() {
-            const comentario = document.getElementById('comentarioDescuento').value.trim();
-            const tienda = document.getElementById('tiendaDestino').value.trim();
-
-            if (!comentario) {
-                showToast("Indica el motivo del descuento.", "error");
-                return;
-            }
-            if (!tienda) {
-                showToast("Selecciona la tienda destino.", "error");
-                return;
-            }
-            if (!descuentoPendiente) return;
-
-            const { id, nombreProd, cantidad } = descuentoPendiente;
-            // Se usa el stock más reciente por si ha cambiado mientras el modal estaba abierto
-            const stockActual = Number((inventarioGlobal[id] || {}).stock ?? descuentoPendiente.stockActual);
-            const nuevoStock = stockActual - cantidad;
-
-            if (nuevoStock < 0) {
-                showToast(`No hay suficiente stock (quedan ${stockActual}).`, "error");
-                return;
-            }
-
-            try {
-                const prodRef = ref(db, 'inventario/' + id);
-                update(prodRef, { stock: nuevoStock });
-                registrarLog(`Salida (-${cantidad}) en '${nombreProd}' [Tienda: ${tienda}]. Stock total: ${nuevoStock}`, comentario);
-                delete cantidadesFila[id]; // vuelve a 1 para evitar repetir una cantidad grande sin querer
-                cerrarModal();
-                showToast(`Stock descontado correctamente (−${cantidad})`);
-            } catch (error) {
-                console.error("Error:", error);
-            }
-        }
-
-        function limpiarFiltros() {
-            document.getElementById('searchInput').value = '';
-            document.getElementById('filterTipo').value = '';
-            document.getElementById('filterUbicacion').value = '';
-            document.getElementById('filterEstado').value = '';
-            renderizarTablaInventario();
-        }
-
-        function filtrarInventario() {
-            renderizarTablaInventario();
-        }
-
-        function renderizarTablaInventario() {
-            const tableBody = document.getElementById('inventoryTable');
-            const searchText = document.getElementById('searchInput').value.toLowerCase().trim();
-            const filterTipo = document.getElementById('filterTipo').value;
-            const filterUbicacion = document.getElementById('filterUbicacion').value;
-            const filterEstado = document.getElementById('filterEstado').value;
-
-            tableBody.innerHTML = "";
-            const ids = Object.keys(inventarioGlobal);
-
-            if (ids.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="7" class="text-center py-10 text-slate-400 font-medium">Sin productos registrados.</td></tr>`;
-                return;
-            }
-
-            let totalItems = 0;
-            let totalStock = 0;
-            let criticalCount = 0;
-            let countRendered = 0;
-
-            ids.forEach((id) => {
-                const prod = inventarioGlobal[id];
-                totalItems++;
-                totalStock += Number(prod.stock || 0);
-                if (Number(prod.stock || 0) < 5) criticalCount++;
-
-                const coincideTexto = !searchText || prod.nombre.toLowerCase().includes(searchText) || prod.referencia.toLowerCase().includes(searchText);
-                const coincideTipo = !filterTipo || prod.tipo === filterTipo;
-                const ubicacion = prod.ubicacion || 'Sin indicar';
-                const estado = prod.estado || 'Sin indicar';
-                const coincideUbicacion = !filterUbicacion || ubicacion === filterUbicacion;
-                const coincideEstado = !filterEstado || estado === filterEstado;
-
-                if (!coincideTexto || !coincideTipo || !coincideUbicacion || !coincideEstado) return;
-
-                countRendered++;
-                const tipoBadge = prod.tipo ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-brand-600 dark:text-brand-400 border border-slate-200 dark:border-slate-700">${prod.tipo}</span>` : `<span class="text-slate-400 text-xs">-</span>`;
-                const ubicacionBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${ubicacion === 'Sin indicar' ? 'bg-slate-100 dark:bg-slate-800 text-slate-500' : 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'}">${ubicacion}</span>`;
-                const estadoBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${estado === 'Nuevo' ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300' : estado === 'Usado' ? 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300' : 'bg-slate-100 dark:bg-slate-800 text-slate-500'}">${estado}</span>`;
-
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-50 dark:hover:bg-slate-800/50 transition";
-                tr.innerHTML = `
-                    <td class="py-2 px-2 font-mono text-[11px] font-bold text-slate-600 dark:text-slate-300">${prod.referencia}</td>
-                    <td class="py-2 px-2 font-semibold truncate text-slate-800 dark:text-slate-200">${prod.nombre}</td>
-                    <td class="py-2 px-2">${tipoBadge}</td>
-                    <td class="py-2 px-2">${ubicacionBadge}</td>
-                    <td class="py-2 px-2 text-center">${estadoBadge}</td>
-                    <td class="py-2 px-2 text-center font-black text-brand-600 dark:text-brand-400 text-base">${prod.stock}</td>
-                    <td class="py-2 px-2 text-center">
-                        <div class="flex items-center justify-center gap-1.5 flex-nowrap">
-                            <button onclick="window.ejecutarCambiarStock('${id}', -1)" title="Restar la cantidad indicada" class="w-8 h-8 shrink-0 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm font-black shadow transition cursor-pointer">−</button>
-                            <input type="number" min="1" step="1" inputmode="numeric" value="${leerCantidad(id)}" oninput="window.guardarCantidad('${id}', this.value)" onfocus="this.select()" title="Cantidad a sumar o restar" class="w-14 h-8 shrink-0 px-1 text-center bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-lg text-xs font-bold focus:border-brand-500 focus:outline-none transition">
-                            <button onclick="window.ejecutarCambiarStock('${id}', 1)" title="Sumar la cantidad indicada" class="w-8 h-8 shrink-0 bg-brand-500 hover:bg-brand-600 text-white rounded-lg text-sm font-black shadow transition cursor-pointer">+</button>
-                            <button onclick="window.ejecutarEliminar('${id}', '${prod.nombre.replace(/'/g, "\\'")}')" class="h-8 px-3 shrink-0 bg-slate-100 dark:bg-slate-800 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 text-slate-500 rounded-lg text-[11px] font-bold transition border border-slate-200 dark:border-slate-700 cursor-pointer whitespace-nowrap" title="Eliminar producto">🗑️ Eliminar</button>
-                        </div>
-                    </td>
-                `;
-                tableBody.appendChild(tr);
-            });
-
-            if (countRendered === 0) {
-                tableBody.innerHTML = `<tr><td colspan="7" class="text-center py-10 text-slate-400 font-medium">No se encontraron productos con esos filtros.</td></tr>`;
-            }
-
-            document.getElementById('statTotalItems').textContent = totalItems;
-            document.getElementById('statTotalStock').textContent = totalStock;
-            document.getElementById('statCritical').textContent = criticalCount;
-        }
-
-        function exportarExcel() {
-            const ids = Object.keys(inventarioGlobal);
-            if (ids.length === 0) {
-                showToast("No hay datos para exportar.", "error");
-                return;
-            }
-
-            let htmlTabla = `
-                <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
-                <head>
-                    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-                    <style>
-                        table { border-collapse: collapse; width: 100%; font-family: Arial, sans-serif; }
-                        th { background-color: #0a6f2c; color: #ffffff; font-weight: bold; text-align: center; padding: 12px; border: 1px solid #064e1f; font-size: 13px; }
-                        td { padding: 10px; border: 1px solid #d1f5e3; font-size: 12px; text-align: left; }
-                        .center { text-align: center; }
-                        .bold { font-weight: bold; }
-                        .title { font-size: 16px; font-weight: bold; color: #0a6f2c; margin-bottom: 15px; }
-                    </style>
-                </head>
-                <body>
-                    <div class="title">Reporte de Inventario - Papa Johns</div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Nº de Serie</th>
-                                <th>Nombre</th>
-                                <th>Categoría</th>
-                                <th>Ubicación</th>
-                                <th>Estado</th>
-                                <th>Cantidad</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-            `;
-
-            ids.forEach(id => {
-                const p = inventarioGlobal[id];
-                htmlTabla += `
-                    <tr>
-                        <td class="bold center">${p.referencia}</td>
-                        <td>${p.nombre}</td>
-                        <td>${p.tipo || 'General'}</td>
-                        <td>${p.ubicacion || 'Sin indicar'}</td>
-                        <td>${p.estado || 'Sin indicar'}</td>
-                        <td class="center bold" style="color: #15803d;">${p.stock}</td>
-                    </tr>
-                `;
-            });
-
-            htmlTabla += `
-                        </tbody>
-                    </table>
-                </body>
-                </html>
-            `;
-
-            const blob = new Blob(["\ufeff" + htmlTabla], { type: 'application/vnd.ms-excel;charset=utf-8' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `Inventario_PapaJohns_${new Date().toISOString().slice(0,10)}.xls`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            showToast("Excel descargado con éxito");
-        }
-
-        function iniciarLogica() {
-            const form = document.getElementById('productForm');
-
-            form.onsubmit = (e) => {
-                e.preventDefault();
-                const tipo = document.getElementById('tipoProducto').value;
-                const referencia = document.getElementById('ref').value.trim();
-                const nombre = document.getElementById('nombre').value.trim();
-                const stock = parseInt(document.getElementById('stock').value);
-                const ubicacion = document.getElementById('ubicacionProducto').value;
-                const estado = document.getElementById('estadoProducto').value;
-
-                try {
-                    const inventarioRef = ref(db, 'inventario');
-                    const nuevoProdRef = push(inventarioRef);
-                    set(nuevoProdRef, { referencia, nombre, tipo, stock, ubicacion, estado });
-                    registrarLog(`Añadió '${nombre}' [Nº Serie: ${referencia}] con cantidad ${stock} | Ubicación: ${ubicacion} | Estado: ${estado}`);
-                    form.reset();
-                    document.getElementById('stock').value = "0";
-                    document.getElementById('ubicacionProducto').value = "";
-                    document.getElementById('estadoProducto').value = "";
-                    showToast("Producto añadido con éxito");
-                } catch (error) {
-                    showToast("Error al añadir producto: " + error.message, "error");
-                }
-            };
-
-            window.guardarCantidad = function(id, valor) {
-                cantidadesFila[id] = valor;
-            }
-
-            // signo: 1 para sumar, -1 para restar. La cantidad sale del campo de la fila.
-            window.ejecutarCambiarStock = function(id, signo) {
-                const prod = inventarioGlobal[id];
-                if (!prod) return;
-
-                const nombreProd = prod.nombre;
-                const stockActual = Number(prod.stock || 0);
-                const cantidad = leerCantidad(id);
-
-                if (signo < 0) {
-                    if (cantidad > stockActual) {
-                        showToast(`No puedes restar ${cantidad}: solo quedan ${stockActual}.`, "error");
-                        return;
-                    }
-                    abrirModalDescuento(id, nombreProd, stockActual, cantidad);
-                    return;
-                }
-
-                const nuevoStock = stockActual + cantidad;
-
-                try {
-                    const prodRef = ref(db, 'inventario/' + id);
-                    update(prodRef, { stock: nuevoStock });
-                    registrarLog(`Entrada (+${cantidad}) en '${nombreProd}'. Stock total: ${nuevoStock}`);
-                    delete cantidadesFila[id]; // vuelve a 1 para evitar repetir una cantidad grande sin querer
-                    showToast(`Stock actualizado (+${cantidad})`);
-                } catch (error) {
-                    console.error("Error:", error);
-                }
-            }
-
-            let productoPendienteEliminar = null;
-
-            function abrirModalEliminar(id, nombreProd) {
-                productoPendienteEliminar = { id, nombreProd };
-                document.getElementById('eliminarModalProducto').textContent = nombreProd;
-                document.getElementById('eliminarModal').classList.remove('hidden');
-                document.getElementById('eliminarModal').classList.add('flex');
-            }
-
-            function cerrarModalEliminar() {
-                document.getElementById('eliminarModal').classList.remove('flex');
-                document.getElementById('eliminarModal').classList.add('hidden');
-                productoPendienteEliminar = null;
-            }
-
-            document.getElementById('btnCancelarEliminar').addEventListener('click', cerrarModalEliminar);
-            document.getElementById('btnConfirmarEliminar').addEventListener('click', async () => {
-                if (!productoPendienteEliminar) return;
-                const { id, nombreProd } = productoPendienteEliminar;
-                try {
-                    const prodRef = ref(db, 'inventario/' + id);
-                    await remove(prodRef);
-                    registrarLog(`Eliminó el producto '${nombreProd}'`);
-                    cerrarModalEliminar();
-                    showToast("Producto eliminado");
-                } catch (error) {
-                    console.error("Error:", error);
-                    showToast("No se pudo eliminar el producto", "error");
-                }
-            });
-
-            window.ejecutarEliminar = function(id, nombreProd) {
-                abrirModalEliminar(id, nombreProd);
-            }
-
-            const inventarioRef = ref(db, 'inventario');
-            onValue(inventarioRef, (snapshot) => {
-                inventarioGlobal = snapshot.val() || {};
-                renderizarTablaInventario();
-            });
-
-            const logsRef = ref(db, 'historial');
-            onValue(logsRef, (snapshot) => {
-                const logsContainer = document.getElementById('logsContainer');
-                logsContainer.innerHTML = "";
-                const data = snapshot.val();
-                if (!data) {
-                    logsContainer.innerHTML = `<p class="text-center text-slate-400 py-10 text-xs font-medium">Sin actividad.</p>`;
-                    return;
-                }
-                const logsArray = Object.values(data).reverse().slice(0, 20);
-                logsArray.forEach((log) => {
-                    const div = document.createElement('div');
-                    div.className = "bg-brand-50/50 dark:bg-slate-800/40 p-3.5 rounded-xl border-l-4 border-brand-500 text-xs shadow-sm";
-                    div.innerHTML = `
-                        <div class="flex justify-between items-center mb-1">
-                            <span class="font-black text-brand-700 dark:text-brand-400 uppercase tracking-wide">${log.usuario}</span>
-                            <span class="text-slate-400 text-[10px]">${log.fecha}</span>
-                        </div>
-                        <div class="text-slate-700 dark:text-slate-300 font-medium">${log.detalle}</div>
-                    `;
-                    logsContainer.appendChild(div);
-                });
-            });
-        }
-
-        init();
-    </script>
+    <!-- Script JavaScript Externo -->
+    <script type="module" src="script.js"></script>
 </body>
 </html>
