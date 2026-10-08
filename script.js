@@ -21,6 +21,23 @@ const categoriasList = [
     "Servidor", "Switch", "Tablet", "Teclado", "Telefonos", "TPV", "UPS FoodTruck"
 ];
 
+const nombresArticulosList = [
+    "Terminal POS TPV Principal",
+    "Lector de Código de Barras Láser",
+    "Impresora Térmica de Tickets EPSON",
+    "Router Cisco Enterprise",
+    "Switch PoE 24 Puertos Gigabit",
+    "Auriculares con Micrófono y Cancelación",
+    "Cable UTP Cat 6 Bobina 305m",
+    "Teclado y Ratón Inalámbrico Comercial",
+    "Monitor LED Full HD 24\"",
+    "Cajón Portamonedas Automático RJ11",
+    "SAI / UPS Respaldo Eléctrico 1500VA",
+    "Tablet Táctil de Gestión de Comandas",
+    "Adaptador Corriente Universal 19V",
+    "Antena WiFi de Alta Ganancia"
+];
+
 const tiendas = [
     "SERRANO", "PRINCIPE", "PESETA", "SILVANO", "SANSE", "ALBUFERA", "SANCHINARRO", "VALLEJO",
     "GETAFE EL BERCIAL", "ALCORCON NORTE", "MOSTOLES NORTE", "ANTRACITA", "SUECIA", "TORREJON",
@@ -78,6 +95,20 @@ function init() {
     document.getElementById('btnClearLogs').addEventListener('click', abrirModalActividad);
     document.getElementById('btnCancelarActividad').addEventListener('click', cerrarModalActividad);
     document.getElementById('btnConfirmarActividad').addEventListener('click', confirmarReinicioActividad);
+
+    const selectNombre = document.getElementById('nombreProductoSelect');
+    selectNombre.addEventListener('change', (e) => {
+        const manualContainer = document.getElementById('nombreManualContainer');
+        const manualInput = document.getElementById('nombreManualInput');
+        if (e.target.value === 'OTRO') {
+            manualContainer.classList.remove('hidden');
+            manualInput.required = true;
+        } else {
+            manualContainer.classList.add('hidden');
+            manualInput.required = false;
+            manualInput.value = '';
+        }
+    });
 
     ['nombreUsuario', 'passwordUsuario', 'nombrePersonal'].forEach(id => {
         document.getElementById(id).addEventListener('keypress', (e) => {
@@ -170,6 +201,11 @@ function mostrarApp() {
     const tipoSelectForm = document.getElementById('tipoProducto');
     tipoSelectForm.innerHTML = '<option value="">Selecciona categoría</option>' +
         categoriasList.map(c => `<option value="${c}">${c}</option>`).join('');
+
+    const nombreSelectForm = document.getElementById('nombreProductoSelect');
+    nombreSelectForm.innerHTML = '<option value="">Selecciona nombre de artículo</option>' +
+        nombresArticulosList.map(n => `<option value="${n}">${n}</option>`).join('') +
+        '<option value="OTRO">✏️ Otro (Escribir manual)...</option>';
 
     const filterTipo = document.getElementById('filterTipo');
     filterTipo.innerHTML = '<option value="">Todas las categorías</option>' +
@@ -307,7 +343,7 @@ function renderizarTablaInventario() {
     const ids = Object.keys(inventarioGlobal);
 
     if (ids.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="7" class="text-center py-10 text-slate-400 font-medium">Sin productos registrados.</td></tr>`;
+        tableBody.innerHTML = `<tr><td colspan="9" class="text-center py-10 text-slate-400 font-medium">Sin productos registrados.</td></tr>`;
         return;
     }
 
@@ -322,7 +358,8 @@ function renderizarTablaInventario() {
         totalStock += Number(prod.stock || 0);
         if (Number(prod.stock || 0) < 5) criticalCount++;
 
-        const coincideTexto = !searchText || prod.nombre.toLowerCase().includes(searchText) || prod.referencia.toLowerCase().includes(searchText);
+        const nombreCompletoConComentario = prod.comentario ? `${prod.nombre} (${prod.comentario})` : prod.nombre;
+        const coincideTexto = !searchText || nombreCompletoConComentario.toLowerCase().includes(searchText) || prod.referencia.toLowerCase().includes(searchText);
         const coincideTipo = !filterTipo || prod.tipo === filterTipo;
         const ubicacion = prod.ubicacion || 'Sin indicar';
         const estado = prod.estado || 'Sin indicar';
@@ -335,22 +372,29 @@ function renderizarTablaInventario() {
         const tipoBadge = prod.tipo ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-brand-600 dark:text-brand-400 border border-slate-200 dark:border-slate-700">${prod.tipo}</span>` : `<span class="text-slate-400 text-xs">-</span>`;
         const ubicacionBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${ubicacion === 'Sin indicar' ? 'bg-slate-100 dark:bg-slate-800 text-slate-500' : 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'}">${ubicacion}</span>`;
         const estadoBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${estado === 'Nuevo' ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300' : estado === 'Usado' ? 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300' : 'bg-slate-100 dark:bg-slate-800 text-slate-500'}">${estado}</span>`;
+        const precioFormatted = Number(prod.precio || 0).toLocaleString('es-ES', { style: 'currency', currency: 'EUR' });
+        const fechaAlta = prod.fechaAlta || '-';
 
         const tr = document.createElement('tr');
         tr.className = "hover:bg-slate-50 dark:hover:bg-slate-800/50 transition";
         tr.innerHTML = `
             <td class="py-2 px-2 font-mono text-[11px] font-bold text-slate-600 dark:text-slate-300">${prod.referencia}</td>
-            <td class="py-2 px-2 font-semibold truncate text-slate-800 dark:text-slate-200">${prod.nombre}</td>
+            <td class="py-2 px-2 font-semibold text-slate-800 dark:text-slate-200">
+                <div class="truncate" title="${nombreCompletoConComentario}">${prod.nombre}</div>
+                ${prod.comentario ? `<div class="text-[10px] text-slate-400 italic truncate" title="${prod.comentario}">💬 ${prod.comentario}</div>` : ''}
+            </td>
             <td class="py-2 px-2">${tipoBadge}</td>
+            <td class="py-2 px-2 font-bold text-emerald-600 dark:text-emerald-400">${precioFormatted}</td>
+            <td class="py-2 px-2 text-[10px] text-slate-500 dark:text-slate-400 whitespace-nowrap" title="${fechaAlta}">${fechaAlta}</td>
             <td class="py-2 px-2">${ubicacionBadge}</td>
             <td class="py-2 px-2 text-center">${estadoBadge}</td>
             <td class="py-2 px-2 text-center font-black text-brand-600 dark:text-brand-400 text-base">${prod.stock}</td>
             <td class="py-2 px-2 text-center">
                 <div class="flex items-center justify-center gap-1.5 flex-nowrap">
-                    <button onclick="window.ejecutarCambiarStock('${id}', -1)" title="Restar la cantidad indicada" class="w-8 h-8 shrink-0 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm font-black shadow transition cursor-pointer">−</button>
-                    <input type="number" min="1" step="1" inputmode="numeric" value="${leerCantidad(id)}" oninput="window.guardarCantidad('${id}', this.value)" onfocus="this.select()" title="Cantidad a sumar o restar" class="w-14 h-8 shrink-0 px-1 text-center bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-lg text-xs font-bold focus:border-brand-500 focus:outline-none transition">
-                    <button onclick="window.ejecutarCambiarStock('${id}', 1)" title="Sumar la cantidad indicada" class="w-8 h-8 shrink-0 bg-brand-500 hover:bg-brand-600 text-white rounded-lg text-sm font-black shadow transition cursor-pointer">+</button>
-                    <button onclick="window.ejecutarEliminar('${id}', '${prod.nombre.replace(/'/g, "\\'")}')" class="h-8 px-3 shrink-0 bg-slate-100 dark:bg-slate-800 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 text-slate-500 rounded-lg text-[11px] font-bold transition border border-slate-200 dark:border-slate-700 cursor-pointer whitespace-nowrap" title="Eliminar producto">🗑️ Eliminar</button>
+                    <button onclick="window.ejecutarCambiarStock('${id}', -1)" title="Restar cantidad" class="w-8 h-8 shrink-0 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm font-black shadow transition cursor-pointer">−</button>
+                    <input type="number" min="1" step="1" inputmode="numeric" value="${leerCantidad(id)}" oninput="window.guardarCantidad('${id}', this.value)" onfocus="this.select()" title="Cantidad" class="w-12 h-8 shrink-0 px-1 text-center bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-lg text-xs font-bold focus:border-brand-500 focus:outline-none transition">
+                    <button onclick="window.ejecutarCambiarStock('${id}', 1)" title="Sumar cantidad" class="w-8 h-8 shrink-0 bg-brand-500 hover:bg-brand-600 text-white rounded-lg text-sm font-black shadow transition cursor-pointer">+</button>
+                    <button onclick="window.ejecutarEliminar('${id}', '${prod.nombre.replace(/'/g, "\\'")}')" class="h-8 px-2.5 shrink-0 bg-slate-100 dark:bg-slate-800 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 text-slate-500 rounded-lg text-[11px] font-bold transition border border-slate-200 dark:border-slate-700 cursor-pointer whitespace-nowrap" title="Eliminar producto">🗑️</button>
                 </div>
             </td>
         `;
@@ -358,7 +402,7 @@ function renderizarTablaInventario() {
     });
 
     if (countRendered === 0) {
-        tableBody.innerHTML = `<tr><td colspan="7" class="text-center py-10 text-slate-400 font-medium">No se encontraron productos con esos filtros.</td></tr>`;
+        tableBody.innerHTML = `<tr><td colspan="9" class="text-center py-10 text-slate-400 font-medium">No se encontraron productos con esos filtros.</td></tr>`;
     }
 
     document.getElementById('statTotalItems').textContent = totalItems;
@@ -393,7 +437,10 @@ function exportarExcel() {
                     <tr>
                         <th>Nº de Serie</th>
                         <th>Nombre</th>
+                        <th>Comentario</th>
                         <th>Categoría</th>
+                        <th>Precio (€)</th>
+                        <th>Fecha y Hora Alta</th>
                         <th>Ubicación</th>
                         <th>Estado</th>
                         <th>Cantidad</th>
@@ -408,7 +455,10 @@ function exportarExcel() {
             <tr>
                 <td class="bold center">${p.referencia}</td>
                 <td>${p.nombre}</td>
+                <td>${p.comentario || ''}</td>
                 <td>${p.tipo || 'General'}</td>
+                <td class="bold">${Number(p.precio || 0).toFixed(2)} €</td>
+                <td class="center">${p.fechaAlta || '-'}</td>
                 <td>${p.ubicacion || 'Sin indicar'}</td>
                 <td>${p.estado || 'Sin indicar'}</td>
                 <td class="center bold" style="color: #15803d;">${p.stock}</td>
@@ -441,20 +491,40 @@ function iniciarLogica() {
         e.preventDefault();
         const tipo = document.getElementById('tipoProducto').value;
         const referencia = document.getElementById('ref').value.trim();
-        const nombre = document.getElementById('nombre').value.trim();
+        
+        const selectNombreVal = document.getElementById('nombreProductoSelect').value;
+        let nombre = selectNombreVal;
+        if (selectNombreVal === 'OTRO') {
+            nombre = document.getElementById('nombreManualInput').value.trim();
+        }
+
+        const comentario = document.getElementById('comentarioProducto').value.trim();
+        const precio = parseFloat(document.getElementById('precioProducto').value) || 0;
         const stock = parseInt(document.getElementById('stock').value);
         const ubicacion = document.getElementById('ubicacionProducto').value;
         const estado = document.getElementById('estadoProducto').value;
 
+        if (!nombre) {
+            showToast("Indica el nombre del artículo.", "error");
+            return;
+        }
+
+        const ahora = new Date();
+        const fechaAlta = ahora.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' ' +
+                          ahora.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
         try {
             const inventarioRef = ref(db, 'inventario');
             const nuevoProdRef = push(inventarioRef);
-            set(nuevoProdRef, { referencia, nombre, tipo, stock, ubicacion, estado });
-            registrarLog(`Añadió '${nombre}' [Nº Serie: ${referencia}] con cantidad ${stock} | Ubicación: ${ubicacion} | Estado: ${estado}`);
+            set(nuevoProdRef, { referencia, nombre, comentario, precio, fechaAlta, tipo, stock, ubicacion, estado });
+            registrarLog(`Añadió '${nombre}'${comentario ? ` (\${comentario})` : ''} [Nº Serie: ${referencia}] - Precio: ${precio.toFixed(2)}€ con cantidad ${stock}`);
             form.reset();
             document.getElementById('stock').value = "0";
+            document.getElementById('precioProducto').value = "";
             document.getElementById('ubicacionProducto').value = "";
             document.getElementById('estadoProducto').value = "";
+            document.getElementById('comentarioProducto').value = "";
+            document.getElementById('nombreManualContainer').classList.add('hidden');
             showToast("Producto añadido con éxito");
         } catch (error) {
             showToast("Error al añadir producto: " + error.message, "error");
