@@ -227,7 +227,7 @@
         </div>
     </div>
 
-    <!-- MODAL DESCUENTO (-1 original con tienda) -->
+    <!-- MODAL DESCUENTO (para salida de 1 unidad con tienda) -->
     <div id="comentarioModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
         <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl border border-brand-500/20">
             <h3 class="text-xl font-black text-brand-700 dark:text-brand-400 mb-1">📝 Registrar Salida de Stock</h3>
@@ -253,33 +253,33 @@
         </div>
     </div>
 
-    <!-- MODAL AJUSTE PERSONALIZADO (AÑADIR / QUITAR CANTIDAD GRANDE) -->
+    <!-- MODAL AJUSTE PERSONALIZADO (CANTIDAD LIBRE: 20, 30, ETC.) -->
     <div id="ajusteModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
         <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-brand-500/20">
-            <h3 class="text-xl font-black text-brand-700 dark:text-brand-400 mb-1">⚙️ Ajustar Stock Masivo</h3>
+            <h3 class="text-xl font-black text-brand-700 dark:text-brand-400 mb-1">⚙️ Ajustar Stock Personalizado</h3>
             <p class="text-slate-500 dark:text-slate-400 text-xs mb-6 font-medium">Producto: <strong id="ajusteModalProductName" class="text-slate-800 dark:text-slate-200"></strong></p>
 
             <div class="space-y-4">
                 <div>
                     <label class="block text-xs font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-2">Acción</label>
                     <select id="ajusteAccion" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-brand-500 focus:outline-none transition text-sm font-medium">
-                        <option value="add">➕ Añadir Stock</option>
-                        <option value="sub">➖ Quitar Stock</option>
+                        <option value="add">➕ Añadir Cantidad</option>
+                        <option value="sub">➖ Quitar Cantidad</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-2">Cantidad</label>
-                    <input type="number" id="ajusteCantidad" min="1" value="10" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-brand-500 focus:outline-none transition text-sm font-medium">
+                    <label class="block text-xs font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-2">Cantidad (ej. 1, 20, 30...)</label>
+                    <input type="number" id="ajusteCantidad" min="1" value="20" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-brand-500 focus:outline-none transition text-sm font-medium">
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-2">Motivo / Observación</label>
-                    <input type="text" id="ajusteMotivo" placeholder="Ej. Reposición de almacén / Inventario" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-brand-500 focus:outline-none transition text-sm font-medium">
+                    <input type="text" id="ajusteMotivo" placeholder="Ej. Lote recibido / Ajuste de inventario" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-brand-500 focus:outline-none transition text-sm font-medium">
                 </div>
             </div>
 
             <div class="flex gap-3 justify-end mt-6">
                 <button id="btnCancelAjuste" class="px-5 py-2.5 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 font-bold text-slate-700 dark:text-slate-200 rounded-xl text-xs uppercase tracking-wider transition cursor-pointer">Cancelar</button>
-                <button id="btnConfirmAjuste" class="px-6 py-2.5 bg-gradient-to-r from-brand-500 to-brand-700 hover:from-brand-600 hover:to-brand-800 text-white font-bold rounded-xl text-xs uppercase tracking-wider shadow-md transition cursor-pointer">Aplicar Ajuste</button>
+                <button id="btnConfirmAjuste" class="px-6 py-2.5 bg-gradient-to-r from-brand-500 to-brand-700 hover:from-brand-600 hover:to-brand-800 text-white font-bold rounded-xl text-xs uppercase tracking-wider shadow-md transition cursor-pointer">Aplicar</button>
             </div>
         </div>
     </div>
@@ -535,11 +535,11 @@
             }
         }
 
-        // FUNCIONES PARA MODAL DE AJUSTE PERSONALIZADO / MASIVO
+        // FUNCIONES PARA MODAL DE AJUSTE PERSONALIZADO (CANTIDADES LIBRES: 20, 30, ETC.)
         window.abrirAjusteModal = function(id, nombreProd, stockActual) {
             ajustePendiente = { id, nombreProd, stockActual };
             document.getElementById('ajusteModalProductName').textContent = nombreProd;
-            document.getElementById('ajusteCantidad').value = "10";
+            document.getElementById('ajusteCantidad').value = "20";
             document.getElementById('ajusteMotivo').value = "";
             document.getElementById('ajusteAccion').value = "add";
             document.getElementById('ajusteModal').classList.remove('hidden');
@@ -574,7 +574,7 @@
                 nuevoStock += cantidadInput;
             } else {
                 nuevoStock -= cantidadInput;
-                if (nuevoStock < 0) nuevoStock = 0; // Evitar negativo
+                if (nuevoStock < 0) nuevoStock = 0;
             }
 
             try {
@@ -583,10 +583,10 @@
                 const signo = accion === 'add' ? `+${cantidadInput}` : `-${cantidadInput}`;
                 registrarLog(`Ajuste (${signo}) en '${nombreProd}'. Stock final: ${nuevoStock}`, motivo);
                 cerrarAjusteModal();
-                showToast("Stock ajustado correctamente");
+                showToast("Stock actualizado correctamente");
             } catch (error) {
                 console.error("Error:", error);
-                showToast("Error al ajustar stock", "error");
+                showToast("Error al actualizar stock", "error");
             }
         }
 
@@ -636,7 +636,7 @@
                     <td class="py-3 px-4 text-center space-x-1">
                         <button onclick="window.ejecutarCambiarStock('${id}', '${prod.nombre.replace(/'/g, "\\'")}', ${prod.stock}, -1)" class="px-2.5 py-1.5 bg-red-500 hover:bg-red-600 text-white rounded-lg text-xs font-bold shadow transition cursor-pointer" title="Descontar 1">-1</button>
                         <button onclick="window.ejecutarCambiarStock('${id}', '${prod.nombre.replace(/'/g, "\\'")}', ${prod.stock}, 1)" class="px-2.5 py-1.5 bg-brand-500 hover:bg-brand-600 text-white rounded-lg text-xs font-bold shadow transition cursor-pointer" title="Añadir 1">+1</button>
-                        <button onclick="window.abrirAjusteModal('${id}', '${prod.nombre.replace(/'/g, "\\'")}', ${prod.stock})" class="px-2.5 py-1.5 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-xs font-bold shadow transition cursor-pointer" title="Ajuste personalizado">⚙️</button>
+                        <button onclick="window.abrirAjusteModal('${id}', '${prod.nombre.replace(/'/g, "\\'")}', ${prod.stock})" class="px-2.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold shadow transition cursor-pointer" title="Añadir o quitar cantidad personalizada (ej. 20, 30)">± Cantidad</button>
                         <button onclick="window.ejecutarEliminar('${id}', '${prod.nombre.replace(/'/g, "\\'")}')" class="px-2.5 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-red-50 hover:text-red-600 text-slate-500 rounded-lg text-xs font-bold transition border border-slate-200 dark:border-slate-700 cursor-pointer" title="Eliminar producto">Eliminar</button>
                     </td>
                 `;
