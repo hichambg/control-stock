@@ -119,4 +119,586 @@
                     </div>
                 </div>
                 <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl shadow-lg border border-brand-500/10 flex items-center gap-4">
-                    <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/40 text-blue-600 rounded-xl flex items-
+                    <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/40 text-blue-600 rounded-xl flex items-center justify-center text-xl font-bold">📦</div>
+                    <div>
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Stock Acumulado</p>
+                        <h4 id="statTotalStock" class="text-2xl font-black text-slate-800 dark:text-slate-100">0</h4>
+                    </div>
+                </div>
+                <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl shadow-lg border border-brand-500/10 flex items-center gap-4">
+                    <div class="w-12 h-12 bg-amber-100 dark:bg-amber-900/40 text-amber-600 rounded-xl flex items-center justify-center text-xl font-bold">⚠️</div>
+                    <div>
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Stock Crítico (&lt;5)</p>
+                        <h4 id="statCritical" class="text-2xl font-black text-slate-800 dark:text-slate-100">0</h4>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Product Section -->
+            <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-xl border border-brand-500/10">
+                <h3 class="text-lg font-extrabold text-brand-700 dark:text-brand-400 mb-4 flex items-center gap-2">
+                    <span>➕</span> Añadir Nuevo Producto
+                </h3>
+                <form id="productForm" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-2">Categoría</label>
+                        <select id="tipoProducto" required class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-brand-500 focus:outline-none transition text-sm font-medium">
+                            <option value="">Selecciona categoría</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-2">Referencia</label>
+                        <input type="text" id="ref" required placeholder="REF-001" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-brand-500 focus:outline-none transition text-sm font-medium">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-2">Nombre</label>
+                        <input type="text" id="nombre" required placeholder="Nombre del producto" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-brand-500 focus:outline-none transition text-sm font-medium">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-2">Cantidad</label>
+                        <input type="number" id="stock" required min="0" value="0" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-brand-500 focus:outline-none transition text-sm font-medium">
+                    </div>
+                    <div class="flex items-end">
+                        <button type="submit" class="w-full py-3 bg-gradient-to-r from-brand-500 to-brand-700 hover:from-brand-600 hover:to-brand-800 text-white font-bold rounded-xl shadow-md transition uppercase tracking-wider text-sm cursor-pointer">
+                            Añadir Stock
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Main Layout Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                <!-- Inventory List Table -->
+                <div class="lg:col-span-2 bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-xl border border-brand-500/15 flex flex-col">
+                    <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4 mb-6">
+                        <h3 class="text-lg font-extrabold text-brand-700 dark:text-brand-400 flex items-center gap-2">
+                            <span>📋</span> Inventario Actual
+                        </h3>
+                        
+                        <!-- FILTROS DE BÚSQUEDA Y CATEGORÍA -->
+                        <div class="flex flex-wrap items-center gap-2">
+                            <div class="relative flex-1 sm:w-48">
+                                <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">🔍</span>
+                                <input type="text" id="searchInput" placeholder="Buscar..." class="w-full pl-9 pr-4 py-2 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium focus:border-brand-500 focus:outline-none transition">
+                            </div>
+                            <div class="sm:w-48">
+                                <select id="filterTipo" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold focus:border-brand-500 focus:outline-none transition">
+                                    <option value="">Todas las categorías</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto flex-1 rounded-xl border border-slate-100 dark:border-slate-800">
+                        <table class="w-full border-collapse text-left text-sm">
+                            <thead>
+                                <tr class="bg-slate-50 dark:bg-slate-800/80 text-brand-700 dark:text-brand-400 uppercase text-[10px] font-black tracking-wider border-b border-slate-200 dark:border-slate-700">
+                                    <th class="py-3 px-4">Referencia</th>
+                                    <th class="py-3 px-4">Producto</th>
+                                    <th class="py-3 px-4">Categoría</th>
+                                    <th class="py-3 px-4 text-center">Stock</th>
+                                    <th class="py-3 px-4 text-center">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inventoryTable" class="divide-y divide-slate-100 dark:divide-slate-800">
+                                <tr><td colspan="5" class="text-center py-10 text-slate-400 font-medium">Cargando productos...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Activity Log Sidebar -->
+                <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-xl border border-brand-500/15 flex flex-col">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-extrabold text-brand-700 dark:text-brand-400 flex items-center gap-2">
+                            <span>⚡</span> Actividad Reciente
+                        </h3>
+                        <span class="text-[10px] bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-full font-bold text-slate-500 uppercase tracking-wide">Últimos</span>
+                    </div>
+                    <div id="logsContainer" class="flex-1 overflow-y-auto max-h-[460px] space-y-3 pr-1">
+                        <p class="text-center text-slate-400 py-10 text-xs font-medium">Sin actividad reciente.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DESCUENTO -->
+    <div id="comentarioModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl border border-brand-500/20">
+            <h3 class="text-xl font-black text-brand-700 dark:text-brand-400 mb-1">📝 Registrar Salida de Stock</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-xs mb-6 font-medium">Producto afectado: <strong id="modalProductName" class="text-slate-800 dark:text-slate-200"></strong></p>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-2">Motivo del Descuento</label>
+                    <textarea id="comentarioDescuento" rows="3" placeholder="Explica el motivo..." class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-brand-500 focus:outline-none transition text-sm font-medium resize-none"></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-2">Tienda Destino</label>
+                    <select id="tiendaDestino" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-brand-500 focus:outline-none transition text-sm font-medium">
+                        <option value="">Selecciona una tienda</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="flex gap-3 justify-end mt-6">
+                <button id="btnCancelModal" class="px-5 py-2.5 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 font-bold text-slate-700 dark:text-slate-200 rounded-xl text-xs uppercase tracking-wider transition cursor-pointer">Cancelar</button>
+                <button id="btnConfirmModal" class="px-6 py-2.5 bg-gradient-to-r from-brand-500 to-brand-700 hover:from-brand-600 hover:to-brand-800 text-white font-bold rounded-xl text-xs uppercase tracking-wider shadow-md transition cursor-pointer">Confirmar Salida</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FIREBASE & LOGIC SCRIPT -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, push, set, update, remove, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBwWhut9ALZuP5skWRT6RIBUR7hcf408Ks",
+            authDomain: "gestion-de-stock-ab0fe.firebaseapp.com",
+            databaseURL: "https://gestion-de-stock-ab0fe-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "gestion-de-stock-ab0fe",
+            storageBucket: "gestion-de-stock-ab0fe.appspot.com",
+            messagingSenderId: "45302180887",
+            appId: "1:45302180887:web:12d0f6fe21eed0e5dc052",
+            measurementId: "G-YRBRV377PP"
+        };
+
+        const categoriasList = [
+            "Adaptador", "Altavoces", "Atena", "Auriculares Tienda", "Botonera",
+            "Cables", "Cajón", "Cargador", "Cascos oficina", "Duplicadores",
+            "Hubs", "Impresora Blaster", "Impresora Oficina", "Impresora Tickets",
+            "Kitchen", "Memorias", "Meraki", "Monitor", "ONT", "Pantalla",
+            "Pantalla Menuboard 40", "Portatil", "Ratones", "Router", "Seguridad",
+            "Servidor", "Switch", "Tablet", "Teclado", "Telefonos", "TPV", "UPS FoodTruck"
+        ];
+
+        const tiendas = [
+            "SERRANO", "PRINCIPE", "PESETA", "SILVANO", "SANSE", "ALBUFERA", "SANCHINARRO", "VALLEJO",
+            "GETAFE EL BERCIAL", "ALCORCON NORTE", "MOSTOLES NORTE", "ANTRACITA", "SUECIA", "TORREJON",
+            "GALILEO", "LEGANES", "FUENLABRADA", "ALCALA JOSE MARIA PEREDA", "TOLEDO", "VILLALBA",
+            "GETAFE LOS MOLINOS", "PALACIO", "LAS ROZAS", "CUENCA", "TELESFORO", "SALLADOLID RECOLETOS",
+            "SABADELL", "DIAGONAL", "ZARAGOZA DELICIAS", "ALCOBENDAS", "ZARAGOZA CASCO ANTIGUO",
+            "GENERAL RICARDOS", "LOS YEBENES", "LEON", "BURGOS", "ALCALA LOPE DE FIGUEROA", "GIJON ESTE",
+            "MARQUES DE VIANA", "BILBAO", "ORCASITAS", "TARRASA", "VALDEMORO", "VALDERREBOLLO", "SICILIA",
+            "GIJON SUR", "POZUELO", "SALAMANCA", "CERRO MINGUETE", "CORTES CATALANAS", "ALCORCON SUR",
+            "ISABEL COLBRAND", "MOSTOLES SUR", "BADALONA", "MAJADAHONDA", "ZARAGOZA LA JOTA", "DIAMANTE",
+            "PERIS & VALERO", "FABRA", "PARIS", "ARTURO SORIA", "REINA VICTORIA", "HOSPITALET", "COSLADA",
+            "PESET", "MUNTANER", "SARRIÀ", "BLASCO IBÁÑEZ", "USERA", "TRES FORQUES", "CORNELLA", "RIVAS",
+            "PARLA CENTRO", "SANT ADRIÀ", "TOMARES", "REPUBLICA ARGENTINA", "MORATALAZ", "SEVILLA ESTE",
+            "DOS HERMANAS", "SAN CIPRIANO", "VALLECAS DK", "GUADALAJARA", "Oviedo General Elorza",
+            "Zaragoza Las Fuentes", "Sevilla Nervión", "BILBAO ABANDO", "SANTANDER CAZOÑA", "Tres Cantos",
+            "Torrevieja", "Santander Puerto", "Aguadulce", "Benidorm", "Molins de Rei", "Logroño", "Vitoria",
+            "Foodtruck3", "Massanassa", "Donosti"
+        ];
+
+        let db, usuarioActual = localStorage.getItem('stock_user') || '';
+        let descuentoPendiente = null;
+        let inventarioGlobal = {};
+
+        function init() {
+            try {
+                const app = initializeApp(firebaseConfig);
+                db = getDatabase(app);
+            } catch (err) {
+                console.error("Error Firebase:", err);
+                document.getElementById('loginError').textContent = "Error de conexión con la base de datos.";
+            }
+
+            if (localStorage.getItem('theme') === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('darkModeIcon').textContent = '☀️';
+            }
+
+            // EventListeners limpios de interfaz
+            document.getElementById('darkModeBtn').addEventListener('click', toggleDarkMode);
+            document.getElementById('btnLogin').addEventListener('click', iniciarSesion);
+            document.getElementById('btnChangeUser').addEventListener('click', cambiarUsuario);
+            document.getElementById('btnExport').addEventListener('click', exportarExcel);
+            document.getElementById('btnCancelModal').addEventListener('click', cerrarModal);
+            document.getElementById('btnConfirmModal').addEventListener('click', confirmarDescuento);
+            document.getElementById('searchInput').addEventListener('input', filtrarInventario);
+            document.getElementById('filterTipo').addEventListener('change', filtrarInventario);
+
+            // Permitir Enter en el login
+            ['nombreUsuario', 'passwordUsuario', 'nombrePersonal'].forEach(id => {
+                document.getElementById(id).addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') iniciarSesion();
+                });
+            });
+
+            const inputUser = document.getElementById('nombreUsuario');
+            inputUser.addEventListener('input', (e) => {
+                const val = e.target.value.trim().toLowerCase();
+                const container = document.getElementById('nombrePersonalContainer');
+                if (val === 'tecnico') {
+                    container.classList.remove('hidden');
+                } else {
+                    container.classList.add('hidden');
+                }
+            });
+
+            if (usuarioActual && db) mostrarApp();
+        }
+
+        function toggleDarkMode() {
+            const html = document.documentElement;
+            const icon = document.getElementById('darkModeIcon');
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+                icon.textContent = '🌙';
+            } else {
+                html.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+                icon.textContent = '☀️';
+            }
+        }
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            const bgClass = type === 'success' ? 'bg-emerald-600' : (type === 'error' ? 'bg-red-600' : 'bg-slate-800');
+            toast.className = `${bgClass} text-white px-4 py-3 rounded-xl shadow-xl text-xs font-bold uppercase tracking-wider transition transform translate-y-2 opacity-0 pointer-events-auto flex items-center gap-2`;
+            toast.innerHTML = `<span>${type === 'success' ? '✅' : '⚠️'}</span> ${message}`;
+            container.appendChild(toast);
+            setTimeout(() => { toast.classList.remove('translate-y-2', 'opacity-0'); }, 50);
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'transition-opacity');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function iniciarSesion() {
+            const usuario = document.getElementById('nombreUsuario').value.trim();
+            const password = document.getElementById('passwordUsuario').value;
+            const nombrePersonal = document.getElementById('nombrePersonal').value.trim();
+            const errorElement = document.getElementById('loginError');
+
+            if (!usuario || !password) {
+                errorElement.textContent = "Por favor, introduce usuario y contraseña.";
+                return;
+            }
+
+            if (usuario.toLowerCase() === 'tecnico') {
+                if (password !== 'papainventario') {
+                    errorElement.textContent = "Contraseña incorrecta para Técnico.";
+                    return;
+                }
+                if (!nombrePersonal) {
+                    errorElement.textContent = "Por favor, introduce tu nombre personal.";
+                    return;
+                }
+                usuarioActual = `Técnico: ${nombrePersonal}`;
+            } else {
+                usuarioActual = usuario;
+            }
+
+            localStorage.setItem('stock_user', usuarioActual);
+            errorElement.textContent = "";
+            mostrarApp();
+        }
+
+        function cambiarUsuario() {
+            localStorage.removeItem('stock_user');
+            location.reload();
+        }
+
+        function mostrarApp() {
+            document.getElementById('loginContainer').classList.add('hidden');
+            document.getElementById('appContainer').classList.remove('hidden');
+            document.getElementById('userDisplay').textContent = `👤 ${usuarioActual}`;
+            
+            const tipoSelectForm = document.getElementById('tipoProducto');
+            tipoSelectForm.innerHTML = '<option value="">Selecciona categoría</option>' +
+                categoriasList.map(c => `<option value="${c}">${c}</option>`).join('');
+
+            const filterTipo = document.getElementById('filterTipo');
+            filterTipo.innerHTML = '<option value="">Todas las categorías</option>' +
+                categoriasList.map(c => `<option value="${c}">${c}</option>`).join('');
+
+            const tiendaSelect = document.getElementById('tiendaDestino');
+            tiendaSelect.innerHTML = '<option value="">Selecciona una tienda</option>' +
+                tiendas.map(t => `<option value="${t}">${t}</option>`).join('');
+
+            iniciarLogica();
+        }
+
+        function registrarLog(accion, comentario = '') {
+            if (!db) return;
+            try {
+                const logsRef = ref(db, 'historial');
+                const nuevoLogRef = push(logsRef);
+                let detalle = accion;
+                if (comentario) detalle += ` | Motivo: ${comentario}`;
+                set(nuevoLogRef, {
+                    usuario: usuarioActual,
+                    detalle: detalle,
+                    fecha: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+                });
+            } catch (e) {
+                console.error("Error historial:", e);
+            }
+        }
+
+        function abrirModalDescuento(id, nombreProd, stockActual) {
+            descuentoPendiente = { id, nombreProd, stockActual };
+            document.getElementById('modalProductName').textContent = nombreProd;
+            document.getElementById('comentarioDescuento').value = '';
+            document.getElementById('tiendaDestino').value = '';
+            document.getElementById('comentarioModal').classList.remove('hidden');
+            document.getElementById('comentarioModal').classList.add('flex');
+        }
+
+        function cerrarModal() {
+            document.getElementById('comentarioModal').classList.remove('flex');
+            document.getElementById('comentarioModal').classList.add('hidden');
+            descuentoPendiente = null;
+        }
+
+        function confirmarDescuento() {
+            const comentario = document.getElementById('comentarioDescuento').value.trim();
+            const tienda = document.getElementById('tiendaDestino').value.trim();
+
+            if (!comentario) {
+                showToast("Indica el motivo del descuento.", "error");
+                return;
+            }
+            if (!tienda) {
+                showToast("Selecciona la tienda destino.", "error");
+                return;
+            }
+            if (!descuentoPendiente) return;
+
+            const { id, nombreProd, stockActual } = descuentoPendiente;
+            const nuevoStock = stockActual - 1;
+
+            try {
+                const prodRef = ref(db, 'inventario/' + id);
+                update(prodRef, { stock: nuevoStock });
+                registrarLog(`Salida (-1) en '${nombreProd}' [Tienda: ${tienda}]`, comentario);
+                cerrarModal();
+                showToast("Stock descontado correctamente");
+            } catch (error) {
+                console.error("Error:", error);
+            }
+        }
+
+        function filtrarInventario() {
+            renderizarTablaInventario();
+        }
+
+        function renderizarTablaInventario() {
+            const tableBody = document.getElementById('inventoryTable');
+            const searchText = document.getElementById('searchInput').value.toLowerCase().trim();
+            const filterTipo = document.getElementById('filterTipo').value;
+
+            tableBody.innerHTML = "";
+            const ids = Object.keys(inventarioGlobal);
+
+            if (ids.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="5" class="text-center py-10 text-slate-400 font-medium">Sin productos registrados.</td></tr>`;
+                return;
+            }
+
+            let totalItems = 0;
+            let totalStock = 0;
+            let criticalCount = 0;
+            let countRendered = 0;
+
+            ids.forEach((id) => {
+                const prod = inventarioGlobal[id];
+                totalItems++;
+                totalStock += Number(prod.stock || 0);
+                if (Number(prod.stock || 0) < 5) criticalCount++;
+
+                const coincideTexto = !searchText || prod.nombre.toLowerCase().includes(searchText) || prod.referencia.toLowerCase().includes(searchText);
+                const coincideTipo = !filterTipo || prod.tipo === filterTipo;
+
+                if (!coincideTexto || !coincideTipo) return;
+
+                countRendered++;
+                const tipoBadge = prod.tipo ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-brand-600 dark:text-brand-400 border border-slate-200 dark:border-slate-700">${prod.tipo}</span>` : `<span class="text-slate-400 text-xs">-</span>`;
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 dark:hover:bg-slate-800/50 transition";
+                tr.innerHTML = `
+                    <td class="py-3 px-4 font-mono text-xs font-bold text-slate-600 dark:text-slate-300">${prod.referencia}</td>
+                    <td class="py-3 px-4 font-semibold text-slate-800 dark:text-slate-200">${prod.nombre}</td>
+                    <td class="py-3 px-4">${tipoBadge}</td>
+                    <td class="py-3 px-4 text-center font-black text-brand-600 dark:text-brand-400 text-base">${prod.stock}</td>
+                    <td class="py-3 px-4 text-center space-x-1">
+                        <button onclick="window.ejecutarCambiarStock('${id}', '${prod.nombre.replace(/'/g, "\\'")}', ${prod.stock}, -1)" class="px-2.5 py-1.5 bg-red-500 hover:bg-red-600 text-white rounded-lg text-xs font-bold shadow transition cursor-pointer">-1</button>
+                        <button onclick="window.ejecutarCambiarStock('${id}', '${prod.nombre.replace(/'/g, "\\'")}', ${prod.stock}, 1)" class="px-2.5 py-1.5 bg-brand-500 hover:bg-brand-600 text-white rounded-lg text-xs font-bold shadow transition cursor-pointer">+1</button>
+                        <button onclick="window.ejecutarEliminar('${id}', '${prod.nombre.replace(/'/g, "\\'")}')" class="px-2.5 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-red-50 hover:text-red-600 text-slate-500 rounded-lg text-xs font-bold transition border border-slate-200 dark:border-slate-700 cursor-pointer">Eliminar</button>
+                    </td>
+                `;
+                tableBody.appendChild(tr);
+            });
+
+            if (countRendered === 0) {
+                tableBody.innerHTML = `<tr><td colspan="5" class="text-center py-10 text-slate-400 font-medium">No se encontraron productos con esos filtros.</td></tr>`;
+            }
+
+            document.getElementById('statTotalItems').textContent = totalItems;
+            document.getElementById('statTotalStock').textContent = totalStock;
+            document.getElementById('statCritical').textContent = criticalCount;
+        }
+
+        function exportarExcel() {
+            const ids = Object.keys(inventarioGlobal);
+            if (ids.length === 0) {
+                showToast("No hay datos para exportar.", "error");
+                return;
+            }
+
+            let htmlTabla = `
+                <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+                <head>
+                    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+                    <style>
+                        table { border-collapse: collapse; width: 100%; font-family: Arial, sans-serif; }
+                        th { background-color: #0a6f2c; color: #ffffff; font-weight: bold; text-align: center; padding: 12px; border: 1px solid #064e1f; font-size: 13px; }
+                        td { padding: 10px; border: 1px solid #d1f5e3; font-size: 12px; text-align: left; }
+                        .center { text-align: center; }
+                        .bold { font-weight: bold; }
+                        .title { font-size: 16px; font-weight: bold; color: #0a6f2c; margin-bottom: 15px; }
+                    </style>
+                </head>
+                <body>
+                    <div class="title">Reporte de Inventario - Papa Johns</div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Categoría</th>
+                                <th>Referencia</th>
+                                <th>Nombre</th>
+                                <th>Cantidad</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            ids.forEach(id => {
+                const p = inventarioGlobal[id];
+                htmlTabla += `
+                    <tr>
+                        <td>${p.tipo || 'General'}</td>
+                        <td class="bold center">${p.referencia}</td>
+                        <td>${p.nombre}</td>
+                        <td class="center bold" style="color: #15803d;">${p.stock}</td>
+                    </tr>
+                `;
+            });
+
+            htmlTabla += `
+                        </tbody>
+                    </table>
+                </body>
+                </html>
+            `;
+
+            const blob = new Blob(["\ufeff" + htmlTabla], { type: 'application/vnd.ms-excel;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Inventario_PapaJohns_${new Date().toISOString().slice(0,10)}.xls`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            showToast("Excel descargado con éxito");
+        }
+
+        function iniciarLogica() {
+            const form = document.getElementById('productForm');
+
+            form.onsubmit = (e) => {
+                e.preventDefault();
+                const tipo = document.getElementById('tipoProducto').value;
+                const referencia = document.getElementById('ref').value.trim();
+                const nombre = document.getElementById('nombre').value.trim();
+                const stock = parseInt(document.getElementById('stock').value);
+
+                try {
+                    const inventarioRef = ref(db, 'inventario');
+                    const nuevoProdRef = push(inventarioRef);
+                    set(nuevoProdRef, { referencia, nombre, tipo, stock });
+                    registrarLog(`Añadió '${nombre}' [${tipo}] con cantidad ${stock}`);
+                    form.reset();
+                    document.getElementById('stock').value = "0";
+                    showToast("Producto añadido con éxito");
+                } catch (error) {
+                    showToast("Error al añadir producto: " + error.message, "error");
+                }
+            };
+
+            window.ejecutarCambiarStock = function(id, nombreProd, stockActual, cantidad) {
+                const nuevoStock = stockActual + cantidad;
+                if (nuevoStock < 0) return;
+
+                if (cantidad < 0) {
+                    abrirModalDescuento(id, nombreProd, stockActual);
+                    return;
+                }
+
+                try {
+                    const prodRef = ref(db, 'inventario/' + id);
+                    update(prodRef, { stock: nuevoStock });
+                    registrarLog(`Entrada (+${cantidad}) en '${nombreProd}'. Stock total: ${nuevoStock}`);
+                    showToast("Stock actualizado");
+                } catch (error) {
+                    console.error("Error:", error);
+                }
+            }
+
+            window.ejecutarEliminar = function(id, nombreProd) {
+                if (confirm(`¿Estás seguro de eliminar el producto '${nombreProd}'?`)) {
+                    try {
+                        const prodRef = ref(db, 'inventario/' + id);
+                        remove(prodRef);
+                        registrarLog(`Eliminó el producto '${nombreProd}'`);
+                        showToast("Producto eliminado");
+                    } catch (error) {
+                        console.error("Error:", error);
+                    }
+                }
+            }
+
+            const inventarioRef = ref(db, 'inventario');
+            onValue(inventarioRef, (snapshot) => {
+                inventarioGlobal = snapshot.val() || {};
+                renderizarTablaInventario();
+            });
+
+            const logsRef = ref(db, 'historial');
+            onValue(logsRef, (snapshot) => {
+                const logsContainer = document.getElementById('logsContainer');
+                logsContainer.innerHTML = "";
+                const data = snapshot.val();
+                if (!data) {
+                    logsContainer.innerHTML = `<p class="text-center text-slate-400 py-10 text-xs font-medium">Sin actividad.</p>`;
+                    return;
+                }
+                const logsArray = Object.values(data).reverse().slice(0, 20);
+                logsArray.forEach((log) => {
+                    const div = document.createElement('div');
+                    div.className = "bg-brand-50/50 dark:bg-slate-800/40 p-3.5 rounded-xl border-l-4 border-brand-500 text-xs shadow-sm";
+                    div.innerHTML = `
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-black text-brand-700 dark:text-brand-400 uppercase tracking-wide">${log.usuario}</span>
+                            <span class="text-slate-400 text-[10px]">${log.fecha}</span>
+                        </div>
+                        <div class="text-slate-700 dark:text-slate-300 font-medium">${log.detalle}</div>
+                    `;
+                    logsContainer.appendChild(div);
+                });
+            });
+        }
+
+        init();
+    </script>
+</body>
+</html>
