@@ -21,6 +21,15 @@ const categoriasList = [
     "Servidor", "Switch", "Tablet", "Teclado", "Telefonos", "TPV", "UPS FoodTruck"
 ];
 
+const productosHabituales = [
+    "ADOC NEO 3850W", "ADOC BT02 PRO", "TH10B", "ADOC HC01", "SALICRU SPS900ONE",
+    "XD5-40D", "XD3-40T", "SRP-350PLUSVK", "NCR CX5", "NCR P1535", "NCR P1532",
+    "Seypos 675", "Cajón Seypos", "KC3", "Acepc", "Toshiba", "NCR N3000",
+    "Fujitsu 21\"", "Samsung Menuboard", "Meraki MX67", "TPLink MR6400",
+    "THUNDERBOOK", "Videograbador Dahua", "Lenovo TB850SF", "Samsung SM-T225",
+    "HP EliteBook", "Lenovo V15 G5", "Teclado MK120", "Raton NGS"
+];
+
 const tiendas = [
     "SERRANO", "PRINCIPE", "PESETA", "SILVANO", "SANSE", "ALBUFERA", "SANCHINARRO", "VALLEJO",
     "GETAFE EL BERCIAL", "ALCORCON NORTE", "MOSTOLES NORTE", "ANTRACITA", "SUECIA", "TORREJON",
@@ -44,11 +53,7 @@ let db, usuarioActual = localStorage.getItem('stock_user') || '';
 let descuentoPendiente = null;
 let inventarioGlobal = {};
 let cantidadesFila = {};
-
-function leerCantidad(id) {
-    const n = parseInt(cantidadesFila[id], 10);
-    return Number.isFinite(n) && n > 0 ? n : 1;
-}
+let tiendaEquiposGlobal = {};
 
 function init() {
     try {
@@ -79,6 +84,42 @@ function init() {
     document.getElementById('btnCancelarActividad').addEventListener('click', cerrarModalActividad);
     document.getElementById('btnConfirmarActividad').addEventListener('click', confirmarReinicioActividad);
 
+    // Navegación Pestañas
+    document.getElementById('tabBtnInventario').addEventListener('click', () => cambiarPestana('inventario'));
+    document.getElementById('tabBtnNuevo').addEventListener('click', () => cambiarPestana('nuevo'));
+    document.getElementById('tabBtnTiendas').addEventListener('click', () => cambiarPestana('tiendas'));
+    document.getElementById('tabBtnActividad').addEventListener('click', () => cambiarPestana('actividad'));
+
+    // Formulario Nombre 'Otro' Entrada
+    document.getElementById('nombreSelect').addEventListener('change', (e) => {
+        const customContainer = document.getElementById('nombreCustomContainer');
+        const customInput = document.getElementById('nombreCustom');
+        if (e.target.value === 'OTRO') {
+            customContainer.classList.remove('hidden');
+            customInput.required = true;
+        } else {
+            customContainer.classList.add('hidden');
+            customInput.required = false;
+        }
+    });
+
+    // Formulario Nombre 'Otro' Tienda
+    document.getElementById('tiendaNombreSelect').addEventListener('change', (e) => {
+        const container = document.getElementById('tiendaNombreCustomContainer');
+        const input = document.getElementById('tiendaNombreCustom');
+        if (e.target.value === 'OTRO') {
+            container.classList.remove('hidden');
+            input.required = true;
+        } else {
+            container.classList.add('hidden');
+            input.required = false;
+        }
+    });
+
+    document.getElementById('selectTiendaModulo').addEventListener('change', (e) => {
+        cargarEquiposTienda(e.target.value);
+    });
+
     ['nombreUsuario', 'passwordUsuario', 'nombrePersonal'].forEach(id => {
         document.getElementById(id).addEventListener('keypress', (e) => {
             if (e.key === 'Enter') iniciarSesion();
@@ -99,6 +140,38 @@ function init() {
     if (usuarioActual && db) mostrarApp();
 }
 
+function cambiarPestana(pestana) {
+    const tabInv = document.getElementById('tabInventarioSection');
+    const tabNue = document.getElementById('tabNuevoSection');
+    const tabTie = document.getElementById('tabTiendasSection');
+    const tabAct = document.getElementById('tabActividadSection');
+
+    const btnInv = document.getElementById('tabBtnInventario');
+    const btnNue = document.getElementById('tabBtnNuevo');
+    const btnTie = document.getElementById('tabBtnTiendas');
+    const btnAct = document.getElementById('tabBtnActividad');
+
+    const activeClass = "bg-brand-600 text-white shadow-md";
+    const inactiveClass = "bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-brand-100 hover:text-brand-700";
+
+    [tabInv, tabNue, tabTie, tabAct].forEach(el => el.classList.add('hidden'));
+    [btnInv, btnNue, btnTie, btnAct].forEach(btn => btn.className = `px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition cursor-pointer ${inactiveClass}`);
+
+    if (pestana === 'inventario') {
+        tabInv.classList.remove('hidden');
+        btnInv.className = `px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition cursor-pointer ${activeClass}`;
+    } else if (pestana === 'nuevo') {
+        tabNue.classList.remove('hidden');
+        btnNue.className = `px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition cursor-pointer ${activeClass}`;
+    } else if (pestana === 'tiendas') {
+        tabTie.classList.remove('hidden');
+        btnTie.className = `px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition cursor-pointer ${activeClass}`;
+    } else if (pestana === 'actividad') {
+        tabAct.classList.remove('hidden');
+        btnAct.className = `px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition cursor-pointer ${activeClass}`;
+    }
+}
+
 function toggleDarkMode() {
     const html = document.documentElement;
     const icon = document.getElementById('darkModeIcon');
@@ -117,7 +190,7 @@ function showToast(message, type = 'success') {
     const container = document.getElementById('toastContainer');
     const toast = document.createElement('div');
     const bgClass = type === 'success' ? 'bg-emerald-600' : (type === 'error' ? 'bg-red-600' : 'bg-slate-800');
-    toast.className = `${bgClass} text-white px-4 py-3 rounded-xl shadow-xl text-xs font-bold uppercase tracking-wider transition transform translate-y-2 opacity-0 pointer-events-auto flex items-center gap-2`;
+    toast.className = `${bgClass} text-white px-4 py-3 rounded-xl shadow-xl text-xs font-bold uppercase tracking-wider transition transform translate-y-2 opacity-0 flex items-center gap-2`;
     toast.innerHTML = `<span>${type === 'success' ? '✅' : '⚠️'}</span> ${message}`;
     container.appendChild(toast);
     setTimeout(() => { toast.classList.remove('translate-y-2', 'opacity-0'); }, 50);
@@ -167,6 +240,7 @@ function mostrarApp() {
     document.getElementById('appContainer').classList.remove('hidden');
     document.getElementById('userDisplay').textContent = `👤 ${usuarioActual}`;
     
+    // Rellenar categorías
     const tipoSelectForm = document.getElementById('tipoProducto');
     tipoSelectForm.innerHTML = '<option value="">Selecciona categoría</option>' +
         categoriasList.map(c => `<option value="${c}">${c}</option>`).join('');
@@ -175,15 +249,29 @@ function mostrarApp() {
     filterTipo.innerHTML = '<option value="">Todas las categorías</option>' +
         categoriasList.map(c => `<option value="${c}">${c}</option>`).join('');
 
+    const tiendaTipo = document.getElementById('tiendaTipo');
+    tiendaTipo.innerHTML = '<option value="">Categoría</option>' +
+        categoriasList.map(c => `<option value="${c}">${c}</option>`).join('');
+
+    // Rellenar desplegable de Nombres de Productos
+    const nombreSelect = document.getElementById('nombreSelect');
+    nombreSelect.innerHTML = '<option value="">Selecciona un producto...</option>' +
+        productosHabituales.map(p => `<option value="${p}">${p}</option>`).join('') +
+        '<option value="OTRO">✏️ Otro (Escribir nombre personalizado)</option>';
+
+    const tiendaNombreSelect = document.getElementById('tiendaNombreSelect');
+    tiendaNombreSelect.innerHTML = '<option value="">Selecciona dispositivo...</option>' +
+        productosHabituales.map(p => `<option value="${p}">${p}</option>`).join('') +
+        '<option value="OTRO">✏️ Otro (Escribir personalizado)</option>';
+
+    // Rellenar Tiendas
     const tiendaSelect = document.getElementById('tiendaDestino');
     tiendaSelect.innerHTML = '<option value="">Selecciona una tienda</option>' +
         tiendas.map(t => `<option value="${t}">${t}</option>`).join('');
 
-    const ubicacionSelect = document.getElementById('ubicacionProducto');
-    ubicacionSelect.innerHTML = '<option value="">Selecciona ubicación</option><option value="ALMACÉN">ALMACÉN</option><option value="ARMARIO">ARMARIO</option>';
-
-    const filterUbicacion = document.getElementById('filterUbicacion');
-    filterUbicacion.innerHTML = '<option value="">Todas las ubicaciones</option><option value="ALMACÉN">ALMACÉN</option><option value="ARMARIO">ARMARIO</option>';
+    const selectTiendaModulo = document.getElementById('selectTiendaModulo');
+    selectTiendaModulo.innerHTML = '<option value="">Selecciona una tienda corporativa...</option>' +
+        tiendas.map(t => `<option value="${t}">${t}</option>`).join('');
 
     iniciarLogica();
 }
@@ -194,11 +282,11 @@ function registrarLog(accion, comentario = '') {
         const logsRef = ref(db, 'historial');
         const nuevoLogRef = push(logsRef);
         let detalle = accion;
-        if (comentario) detalle += ` | Motivo: ${comentario}`;
+        if (comentario) detalle += ` | Motivo/Nota: ${comentario}`;
         set(nuevoLogRef, {
             usuario: usuarioActual,
             detalle: detalle,
-            fecha: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+            fecha: new Date().toLocaleString([], { dateStyle: 'short', timeStyle: 'medium' })
         });
     } catch (e) {
         console.error("Error historial:", e);
@@ -217,20 +305,12 @@ function cerrarModalActividad() {
 
 async function confirmarReinicioActividad() {
     if (!db) return;
-    const boton = document.getElementById('btnConfirmarActividad');
-    boton.disabled = true;
-    boton.textContent = 'Vaciando...';
     try {
-        const logsRef = ref(db, 'historial');
-        await remove(logsRef);
+        await remove(ref(db, 'historial'));
         cerrarModalActividad();
-        showToast("Actividad reciente reiniciada con éxito");
+        showToast("Historial reiniciado");
     } catch (error) {
-        console.error("Error al reiniciar la actividad:", error);
-        showToast("Error al reiniciar la actividad", "error");
-    } finally {
-        boton.disabled = false;
-        boton.textContent = 'Sí, vaciar';
+        showToast("Error al reiniciar historial", "error");
     }
 }
 
@@ -253,32 +333,26 @@ function confirmarDescuento() {
     const comentario = document.getElementById('comentarioDescuento').value.trim();
     const tienda = document.getElementById('tiendaDestino').value.trim();
 
-    if (!comentario) {
-        showToast("Indica el motivo del descuento.", "error");
+    if (!comentario || !tienda || !descuentoPendiente) {
+        showToast("Completa los datos de salida", "error");
         return;
     }
-    if (!tienda) {
-        showToast("Selecciona la tienda destino.", "error");
-        return;
-    }
-    if (!descuentoPendiente) return;
 
     const { id, nombreProd, cantidad } = descuentoPendiente;
     const stockActual = Number((inventarioGlobal[id] || {}).stock ?? descuentoPendiente.stockActual);
     const nuevoStock = stockActual - cantidad;
 
     if (nuevoStock < 0) {
-        showToast(`No hay suficiente stock (quedan ${stockActual}).`, "error");
+        showToast(`Stock insuficiente (${stockActual})`, "error");
         return;
     }
 
     try {
-        const prodRef = ref(db, 'inventario/' + id);
-        update(prodRef, { stock: nuevoStock });
-        registrarLog(`Salida (-${cantidad}) en '${nombreProd}' [Tienda: ${tienda}]. Stock total: ${nuevoStock}`, comentario);
+        update(ref(db, 'inventario/' + id), { stock: nuevoStock });
+        registrarLog(`Salida (-${cantidad}) en '${nombreProd}' [Tienda: ${tienda}]`, comentario);
         delete cantidadesFila[id];
         cerrarModal();
-        showToast(`Stock descontado correctamente (−${cantidad})`);
+        showToast(`Stock descontado (−${cantidad})`);
     } catch (error) {
         console.error("Error:", error);
     }
@@ -307,7 +381,7 @@ function renderizarTablaInventario() {
     const ids = Object.keys(inventarioGlobal);
 
     if (ids.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="7" class="text-center py-10 text-slate-400 font-medium">Sin productos registrados.</td></tr>`;
+        tableBody.innerHTML = `<tr><td colspan="9" class="text-center py-10 text-slate-400 font-medium">Sin productos registrados en inventario.</td></tr>`;
         return;
     }
 
@@ -332,25 +406,33 @@ function renderizarTablaInventario() {
         if (!coincideTexto || !coincideTipo || !coincideUbicacion || !coincideEstado) return;
 
         countRendered++;
-        const tipoBadge = prod.tipo ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-brand-600 dark:text-brand-400 border border-slate-200 dark:border-slate-700">${prod.tipo}</span>` : `<span class="text-slate-400 text-xs">-</span>`;
+        const tipoBadge = prod.tipo ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-brand-600 dark:text-brand-400 border border-slate-200 dark:border-slate-700">${prod.tipo}</span>` : `-`;
         const ubicacionBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${ubicacion === 'Sin indicar' ? 'bg-slate-100 dark:bg-slate-800 text-slate-500' : 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'}">${ubicacion}</span>`;
-        const estadoBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${estado === 'Nuevo' ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300' : estado === 'Usado' ? 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300' : 'bg-slate-100 dark:bg-slate-800 text-slate-500'}">${estado}</span>`;
+        const estadoBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${estado === 'Nuevo' ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300' : 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300'}">${estado}</span>`;
+        
+        const precioFormateado = prod.precio ? `${parseFloat(prod.precio).toFixed(2)} €` : '0.00 €';
+        const fechaFormateada = prod.fechaAdicion || 'No registrada';
 
         const tr = document.createElement('tr');
         tr.className = "hover:bg-slate-50 dark:hover:bg-slate-800/50 transition";
         tr.innerHTML = `
-            <td class="py-2 px-2 font-mono text-[11px] font-bold text-slate-600 dark:text-slate-300">${prod.referencia}</td>
-            <td class="py-2 px-2 font-semibold truncate text-slate-800 dark:text-slate-200">${prod.nombre}</td>
-            <td class="py-2 px-2">${tipoBadge}</td>
-            <td class="py-2 px-2">${ubicacionBadge}</td>
-            <td class="py-2 px-2 text-center">${estadoBadge}</td>
-            <td class="py-2 px-2 text-center font-black text-brand-600 dark:text-brand-400 text-base">${prod.stock}</td>
-            <td class="py-2 px-2 text-center">
-                <div class="flex items-center justify-center gap-1.5 flex-nowrap">
-                    <button onclick="window.ejecutarCambiarStock('${id}', -1)" title="Restar la cantidad indicada" class="w-8 h-8 shrink-0 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm font-black shadow transition cursor-pointer">−</button>
-                    <input type="number" min="1" step="1" inputmode="numeric" value="${leerCantidad(id)}" oninput="window.guardarCantidad('${id}', this.value)" onfocus="this.select()" title="Cantidad a sumar o restar" class="w-14 h-8 shrink-0 px-1 text-center bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-lg text-xs font-bold focus:border-brand-500 focus:outline-none transition">
-                    <button onclick="window.ejecutarCambiarStock('${id}', 1)" title="Sumar la cantidad indicada" class="w-8 h-8 shrink-0 bg-brand-500 hover:bg-brand-600 text-white rounded-lg text-sm font-black shadow transition cursor-pointer">+</button>
-                    <button onclick="window.ejecutarEliminar('${id}', '${prod.nombre.replace(/'/g, "\\'")}')" class="h-8 px-3 shrink-0 bg-slate-100 dark:bg-slate-800 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 text-slate-500 rounded-lg text-[11px] font-bold transition border border-slate-200 dark:border-slate-700 cursor-pointer whitespace-nowrap" title="Eliminar producto">🗑️ Eliminar</button>
+            <td class="py-3 px-3 font-mono text-[11px] font-bold text-slate-600 dark:text-slate-300">${prod.referencia}</td>
+            <td class="py-3 px-3 font-semibold text-slate-800 dark:text-slate-200">
+                <div>${prod.nombre}</div>
+                ${prod.comentario ? `<div class="text-[10px] text-slate-400 font-normal italic mt-0.5">💬 \${prod.comentario}</div>` : ''}
+            </td>
+            <td class="py-3 px-3">${tipoBadge}</td>
+            <td class="py-3 px-3 text-center font-bold text-emerald-600 dark:text-emerald-400">${precioFormateado}</td>
+            <td class="py-3 px-3 text-center text-[10px] text-slate-500 font-medium">${fechaFormateada}</td>
+            <td class="py-3 px-3">${ubicacionBadge}</td>
+            <td class="py-3 px-3 text-center">${estadoBadge}</td>
+            <td class="py-3 px-3 text-center font-black text-brand-600 dark:text-brand-400 text-base">${prod.stock}</td>
+            <td class="py-3 px-3 text-center">
+                <div class="flex items-center justify-center gap-1.5">
+                    <button onclick="window.ejecutarCambiarStock('${id}', -1)" title="Restar stock" class="w-7 h-7 bg-red-500 hover:bg-red-600 text-white rounded-lg text-xs font-black shadow transition cursor-pointer">−</button>
+                    <input type="number" min="1" value="${cantidadesFila[id] || 1}" oninput="window.guardarCantidad('${id}', this.value)" class="w-12 h-7 px-1 text-center bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-lg text-xs font-bold focus:border-brand-500 focus:outline-none">
+                    <button onclick="window.ejecutarCambiarStock('${id}', 1)" title="Sumar stock" class="w-7 h-7 bg-brand-500 hover:bg-brand-600 text-white rounded-lg text-xs font-black shadow transition cursor-pointer">+</button>
+                    <button onclick="window.ejecutarEliminar('${id}', '${prod.nombre.replace(/'/g, "\\'")}')" class="h-7 px-2.5 bg-slate-100 hover:bg-red-50 hover:text-red-600 text-slate-500 rounded-lg text-[10px] font-bold border border-slate-200 cursor-pointer">🗑️</button>
                 </div>
             </td>
         `;
@@ -358,12 +440,76 @@ function renderizarTablaInventario() {
     });
 
     if (countRendered === 0) {
-        tableBody.innerHTML = `<tr><td colspan="7" class="text-center py-10 text-slate-400 font-medium">No se encontraron productos con esos filtros.</td></tr>`;
+        tableBody.innerHTML = `<tr><td colspan="9" class="text-center py-10 text-slate-400 font-medium">No hay productos que coincidan con los filtros.</td></tr>`;
     }
 
     document.getElementById('statTotalItems').textContent = totalItems;
     document.getElementById('statTotalStock').textContent = totalStock;
     document.getElementById('statCritical').textContent = criticalCount;
+}
+
+// Cargar y mostrar los equipos asignados a una tienda
+function cargarEquiposTienda(nombreTienda) {
+    const tbody = document.getElementById('tablaTiendaBody');
+    const titulo = document.getElementById('tiendaTituloTabla');
+    
+    if (!nombreTienda) {
+        tbody.innerHTML = `<tr><td colspan="8" class="text-center py-10 text-slate-400 font-medium">Selecciona una tienda arriba para consultar su equipamiento.</td></tr>`;
+        titulo.textContent = "📋 Equipos Instalados en Tienda";
+        document.getElementById('statTiendaTotalEquipos').textContent = '0';
+        document.getElementById('statTiendaValorTotal').textContent = '0.00 €';
+        return;
+    }
+
+    titulo.textContent = `📋 Equipos Instalados en ${nombreTienda}`;
+    
+    const tiendaRef = ref(db, `tiendas/${nombreTienda}/equipos`);
+    onValue(tiendaRef, (snapshot) => {
+        const equipos = snapshot.val() || {};
+        tiendaEquiposGlobal = equipos;
+        tbody.innerHTML = "";
+        
+        const ids = Object.keys(equipos);
+        if (ids.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="8" class="text-center py-10 text-slate-400 font-medium">No hay dispositivos registrados aún en ${nombreTienda}.</td></tr>`;
+            document.getElementById('statTiendaTotalEquipos').textContent = '0';
+            document.getElementById('statTiendaValorTotal').textContent = '0.00 €';
+            return;
+        }
+
+        let totalCant = 0;
+        let totalValor = 0;
+
+        ids.forEach(id => {
+            const eq = equipos[id];
+            const cantidad = Number(eq.cantidad || 1);
+            const precio = Number(eq.precio || 0);
+            totalCant += cantidad;
+            totalValor += (cantidad * precio);
+
+            const tr = document.createElement('tr');
+            tr.className = "hover:bg-slate-50 dark:hover:bg-slate-800/50 transition";
+            tr.innerHTML = `
+                <td class="py-3 px-3"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-brand-600">${eq.tipo}</span></td>
+                <td class="py-3 px-3 font-semibold text-slate-800 dark:text-slate-200">
+                    ${eq.nombre}
+                    ${eq.notas ? `<div class="text-[10px] text-slate-400 italic font-normal">\${eq.notas}</div>` : ''}
+                </td>
+                <td class="py-3 px-3 font-mono text-[11px] font-bold text-slate-600 dark:text-slate-300">${eq.referencia}</td>
+                <td class="py-3 px-3 text-center font-bold text-emerald-600">${precio.toFixed(2)} €</td>
+                <td class="py-3 px-3 text-center text-[10px] text-slate-500">${eq.fechaInstalacion || '-'}</td>
+                <td class="py-3 px-3 text-center"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${eq.estado === 'Nuevo' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}">${eq.estado}</span></td>
+                <td class="py-3 px-3 text-center font-black text-brand-600">${cantidad}</td>
+                <td class="py-3 px-3 text-center">
+                    <button onclick="window.eliminarEquipoTienda('${nombreTienda}', '${id}', '${eq.nombre.replace(/'/g, "\\'")}')" class="h-7 px-2.5 bg-slate-100 hover:bg-red-50 hover:text-red-600 text-slate-500 rounded-lg text-[10px] font-bold border border-slate-200 cursor-pointer">🗑️</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        document.getElementById('statTiendaTotalEquipos').textContent = totalCant;
+        document.getElementById('statTiendaValorTotal').textContent = `${totalValor.toFixed(2)} €`;
+    });
 }
 
 function exportarExcel() {
@@ -375,28 +521,12 @@ function exportarExcel() {
 
     let htmlTabla = `
         <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
-        <head>
-            <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-            <style>
-                table { border-collapse: collapse; width: 100%; font-family: Arial, sans-serif; }
-                th { background-color: #0a6f2c; color: #ffffff; font-weight: bold; text-align: center; padding: 12px; border: 1px solid #064e1f; font-size: 13px; }
-                td { padding: 10px; border: 1px solid #d1f5e3; font-size: 12px; text-align: left; }
-                .center { text-align: center; }
-                .bold { font-weight: bold; }
-                .title { font-size: 16px; font-weight: bold; color: #0a6f2c; margin-bottom: 15px; }
-            </style>
-        </head>
+        <head><meta http-equiv="content-type" content="text/html; charset=UTF-8"></head>
         <body>
-            <div class="title">Reporte de Inventario - Papa Johns</div>
-            <table>
+            <table border="1">
                 <thead>
-                    <tr>
-                        <th>Nº de Serie</th>
-                        <th>Nombre</th>
-                        <th>Categoría</th>
-                        <th>Ubicación</th>
-                        <th>Estado</th>
-                        <th>Cantidad</th>
+                    <tr style="background-color: #0a6f2c; color: white;">
+                        <th>Nº Serie</th><th>Nombre</th><th>Categoría</th><th>Precio (€)</th><th>Fecha Adición</th><th>Ubicación</th><th>Estado</th><th>Stock</th><th>Comentario</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -406,22 +536,20 @@ function exportarExcel() {
         const p = inventarioGlobal[id];
         htmlTabla += `
             <tr>
-                <td class="bold center">${p.referencia}</td>
+                <td>${p.referencia}</td>
                 <td>${p.nombre}</td>
-                <td>${p.tipo || 'General'}</td>
-                <td>${p.ubicacion || 'Sin indicar'}</td>
-                <td>${p.estado || 'Sin indicar'}</td>
-                <td class="center bold" style="color: #15803d;">${p.stock}</td>
+                <td>${p.tipo || '-'}</td>
+                <td>${p.precio || '0.00'}</td>
+                <td>${p.fechaAdicion || '-'}</td>
+                <td>${p.ubicacion || '-'}</td>
+                <td>${p.estado || '-'}</td>
+                <td>${p.stock}</td>
+                <td>${p.comentario || ''}</td>
             </tr>
         `;
     });
 
-    htmlTabla += `
-                </tbody>
-            </table>
-        </body>
-        </html>
-    `;
+    htmlTabla += `</tbody></table></body></html>`;
 
     const blob = new Blob(["\ufeff" + htmlTabla], { type: 'application/vnd.ms-excel;charset=utf-8' });
     const url = URL.createObjectURL(blob);
@@ -431,113 +559,168 @@ function exportarExcel() {
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-    showToast("Excel descargado con éxito");
+    showToast("Excel descargado");
 }
 
 function iniciarLogica() {
+    // Formulario Entrada Inventario
     const form = document.getElementById('productForm');
-
     form.onsubmit = (e) => {
         e.preventDefault();
+        
         const tipo = document.getElementById('tipoProducto').value;
+        const nombreSel = document.getElementById('nombreSelect').value;
+        const nombreCustom = document.getElementById('nombreCustom').value.trim();
+        const nombreFinal = nombreSel === 'OTRO' ? nombreCustom : nombreSel;
+
         const referencia = document.getElementById('ref').value.trim();
-        const nombre = document.getElementById('nombre').value.trim();
-        const stock = parseInt(document.getElementById('stock').value);
+        const precio = parseFloat(document.getElementById('precio').value) || 0;
+        const stock = parseInt(document.getElementById('stock').value, 10) || 1;
         const ubicacion = document.getElementById('ubicacionProducto').value;
         const estado = document.getElementById('estadoProducto').value;
+        const comentario = document.getElementById('comentarioEntrada').value.trim();
+
+        const fechaAdicion = new Date().toLocaleString('es-ES', { 
+            day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' 
+        });
+
+        if (!nombreFinal) {
+            showToast("Por favor indica el nombre del producto", "error");
+            return;
+        }
 
         try {
-            const inventarioRef = ref(db, 'inventario');
-            const nuevoProdRef = push(inventarioRef);
-            set(nuevoProdRef, { referencia, nombre, tipo, stock, ubicacion, estado });
-            registrarLog(`Añadió '${nombre}' [Nº Serie: ${referencia}] con cantidad ${stock} | Ubicación: ${ubicacion} | Estado: ${estado}`);
+            const nuevoProdRef = push(ref(db, 'inventario'));
+            set(nuevoProdRef, { 
+                referencia, nombre: nombreFinal, tipo, precio, stock, ubicacion, estado, comentario, fechaAdicion 
+            });
+
+            registrarLog(`Añadió '${nombreFinal}' [Nº Serie: ${referencia}] - Precio: ${precio.toFixed(2)}€`, comentario);
             form.reset();
-            document.getElementById('stock').value = "0";
-            document.getElementById('ubicacionProducto').value = "";
-            document.getElementById('estadoProducto').value = "";
-            showToast("Producto añadido con éxito");
+            document.getElementById('nombreCustomContainer').classList.add('hidden');
+            
+            showToast("¡Artículo añadido con éxito!");
+            cambiarPestana('inventario');
         } catch (error) {
-            showToast("Error al añadir producto: " + error.message, "error");
+            showToast("Error al añadir: " + error.message, "error");
+        }
+    };
+
+    // Formulario Dispositivo en Tienda
+    const tiendaForm = document.getElementById('tiendaForm');
+    tiendaForm.onsubmit = (e) => {
+        e.preventDefault();
+
+        const nombreTienda = document.getElementById('selectTiendaModulo').value;
+        if (!nombreTienda) {
+            showToast("Selecciona una tienda primero", "error");
+            return;
+        }
+
+        const tipo = document.getElementById('tiendaTipo').value;
+        const nombreSel = document.getElementById('tiendaNombreSelect').value;
+        const nombreCustom = document.getElementById('tiendaNombreCustom').value.trim();
+        const nombreFinal = nombreSel === 'OTRO' ? nombreCustom : nombreSel;
+
+        const referencia = document.getElementById('tiendaRef').value.trim();
+        const precio = parseFloat(document.getElementById('tiendaPrecio').value) || 0;
+        const cantidad = parseInt(document.getElementById('tiendaCantidad').value, 10) || 1;
+        const estado = document.getElementById('tiendaEstado').value;
+        const notas = document.getElementById('tiendaNotas').value.trim();
+
+        const fechaInstalacion = new Date().toLocaleDateString('es-ES', { 
+            day: '2-digit', month: '2-digit', year: 'numeric' 
+        });
+
+        if (!nombreFinal) {
+            showToast("Indica el nombre del dispositivo", "error");
+            return;
+        }
+
+        try {
+            const equipoRef = push(ref(db, `tiendas/${nombreTienda}/equipos`));
+            set(equipoRef, {
+                tipo, nombre: nombreFinal, referencia, precio, cantidad, estado, notas, fechaInstalacion
+            });
+
+            registrarLog(`Asignó equipo '${nombreFinal}' (${cantidad} ud/s) a la tienda ${nombreTienda}`);
+            tiendaForm.reset();
+            document.getElementById('tiendaNombreCustomContainer').classList.add('hidden');
+            showToast(`Dispositivo asignado a ${nombreTienda}`);
+        } catch (error) {
+            showToast("Error al asignar equipo", "error");
+        }
+    };
+
+    window.eliminarEquipoTienda = async function(nombreTienda, idEquipo, nombreEquipo) {
+        if (!confirm(`¿Deseas eliminar '${nombreEquipo}' de la tienda ${nombreTienda}?`)) return;
+        try {
+            await remove(ref(db, `tiendas/${nombreTienda}/equipos/${idEquipo}`));
+            registrarLog(`Eliminó el equipo '${nombreEquipo}' de la tienda ${nombreTienda}`);
+            showToast("Equipo eliminado de la tienda");
+        } catch (e) {
+            showToast("Error al eliminar equipo", "error");
         }
     };
 
     window.guardarCantidad = function(id, valor) {
         cantidadesFila[id] = valor;
-    }
+    };
 
     window.ejecutarCambiarStock = function(id, signo) {
         const prod = inventarioGlobal[id];
         if (!prod) return;
 
-        const nombreProd = prod.nombre;
+        const cantidad = parseInt(cantidadesFila[id], 10) || 1;
         const stockActual = Number(prod.stock || 0);
-        const cantidad = leerCantidad(id);
 
         if (signo < 0) {
             if (cantidad > stockActual) {
-                showToast(`No puedes restar ${cantidad}: solo quedan ${stockActual}.`, "error");
+                showToast(`Imposible restar ${cantidad}: stock actual es ${stockActual}`, "error");
                 return;
             }
-            abrirModalDescuento(id, nombreProd, stockActual, cantidad);
+            abrirModalDescuento(id, prod.nombre, stockActual, cantidad);
             return;
         }
 
         const nuevoStock = stockActual + cantidad;
-
-        try {
-            const prodRef = ref(db, 'inventario/' + id);
-            update(prodRef, { stock: nuevoStock });
-            registrarLog(`Entrada (+${cantidad}) en '${nombreProd}'. Stock total: ${nuevoStock}`);
-            delete cantidadesFila[id];
-            showToast(`Stock actualizado (+${cantidad})`);
-        } catch (error) {
-            console.error("Error:", error);
-        }
-    }
+        update(ref(db, 'inventario/' + id), { stock: nuevoStock });
+        registrarLog(`Entrada (+${cantidad}) en '${prod.nombre}'. Stock total: ${nuevoStock}`);
+        showToast(`Stock actualizado (+${cantidad})`);
+    };
 
     let productoPendienteEliminar = null;
 
-    function abrirModalEliminar(id, nombreProd) {
+    window.ejecutarEliminar = function(id, nombreProd) {
         productoPendienteEliminar = { id, nombreProd };
         document.getElementById('eliminarModalProducto').textContent = nombreProd;
         document.getElementById('eliminarModal').classList.remove('hidden');
         document.getElementById('eliminarModal').classList.add('flex');
-    }
+    };
 
-    function cerrarModalEliminar() {
-        document.getElementById('eliminarModal').classList.remove('flex');
+    document.getElementById('btnCancelarEliminar').addEventListener('click', () => {
         document.getElementById('eliminarModal').classList.add('hidden');
         productoPendienteEliminar = null;
-    }
+    });
 
-    document.getElementById('btnCancelarEliminar').addEventListener('click', cerrarModalEliminar);
     document.getElementById('btnConfirmarEliminar').addEventListener('click', async () => {
         if (!productoPendienteEliminar) return;
-        const { id, nombreProd } = productoPendienteEliminar;
         try {
-            const prodRef = ref(db, 'inventario/' + id);
-            await remove(prodRef);
-            registrarLog(`Eliminó el producto '${nombreProd}'`);
-            cerrarModalEliminar();
+            await remove(ref(db, 'inventario/' + productoPendienteEliminar.id));
+            registrarLog(`Eliminó el producto '${productoPendienteEliminar.nombre}'`);
+            document.getElementById('eliminarModal').classList.add('hidden');
             showToast("Producto eliminado");
         } catch (error) {
-            console.error("Error:", error);
-            showToast("No se pudo eliminar el producto", "error");
+            showToast("Error al eliminar", "error");
         }
     });
 
-    window.ejecutarEliminar = function(id, nombreProd) {
-        abrirModalEliminar(id, nombreProd);
-    }
-
-    const inventarioRef = ref(db, 'inventario');
-    onValue(inventarioRef, (snapshot) => {
+    onValue(ref(db, 'inventario'), (snapshot) => {
         inventarioGlobal = snapshot.val() || {};
         renderizarTablaInventario();
     });
 
-    const logsRef = ref(db, 'historial');
-    onValue(logsRef, (snapshot) => {
+    onValue(ref(db, 'historial'), (snapshot) => {
         const logsContainer = document.getElementById('logsContainer');
         logsContainer.innerHTML = "";
         const data = snapshot.val();
@@ -545,7 +728,7 @@ function iniciarLogica() {
             logsContainer.innerHTML = `<p class="text-center text-slate-400 py-10 text-xs font-medium">Sin actividad.</p>`;
             return;
         }
-        const logsArray = Object.values(data).reverse().slice(0, 20);
+        const logsArray = Object.values(data).reverse().slice(0, 25);
         logsArray.forEach((log) => {
             const div = document.createElement('div');
             div.className = "bg-brand-50/50 dark:bg-slate-800/40 p-3.5 rounded-xl border-l-4 border-brand-500 text-xs shadow-sm";
