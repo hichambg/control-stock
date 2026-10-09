@@ -53,7 +53,6 @@ let db, usuarioActual = localStorage.getItem('stock_user') || '';
 let descuentoPendiente = null;
 let inventarioGlobal = {};
 let cantidadesFila = {};
-let tiendaEquiposGlobal = {};
 
 function init() {
     try {
@@ -69,6 +68,7 @@ function init() {
         document.getElementById('darkModeIcon').textContent = '☀️';
     }
 
+    // EVENTOS DEL MENÚ Y NAVEGACIÓN
     document.getElementById('darkModeBtn').addEventListener('click', toggleDarkMode);
     document.getElementById('btnLogin').addEventListener('click', iniciarSesion);
     document.getElementById('btnChangeUser').addEventListener('click', cambiarUsuario);
@@ -84,13 +84,13 @@ function init() {
     document.getElementById('btnCancelarActividad').addEventListener('click', cerrarModalActividad);
     document.getElementById('btnConfirmarActividad').addEventListener('click', confirmarReinicioActividad);
 
-    // Navegación Pestañas
+    // BINDING DE PESTAÑAS (CORREGIDO)
     document.getElementById('tabBtnInventario').addEventListener('click', () => cambiarPestana('inventario'));
     document.getElementById('tabBtnNuevo').addEventListener('click', () => cambiarPestana('nuevo'));
     document.getElementById('tabBtnTiendas').addEventListener('click', () => cambiarPestana('tiendas'));
     document.getElementById('tabBtnActividad').addEventListener('click', () => cambiarPestana('actividad'));
 
-    // Formulario Nombre 'Otro' Entrada
+    // Desplegable de nombre de producto (Entradas)
     document.getElementById('nombreSelect').addEventListener('change', (e) => {
         const customContainer = document.getElementById('nombreCustomContainer');
         const customInput = document.getElementById('nombreCustom');
@@ -103,7 +103,7 @@ function init() {
         }
     });
 
-    // Formulario Nombre 'Otro' Tienda
+    // Desplegable de nombre de producto (Tiendas)
     document.getElementById('tiendaNombreSelect').addEventListener('change', (e) => {
         const container = document.getElementById('tiendaNombreCustomContainer');
         const input = document.getElementById('tiendaNombreCustom');
@@ -240,7 +240,7 @@ function mostrarApp() {
     document.getElementById('appContainer').classList.remove('hidden');
     document.getElementById('userDisplay').textContent = `👤 ${usuarioActual}`;
     
-    // Rellenar categorías
+    // Categorías
     const tipoSelectForm = document.getElementById('tipoProducto');
     tipoSelectForm.innerHTML = '<option value="">Selecciona categoría</option>' +
         categoriasList.map(c => `<option value="${c}">${c}</option>`).join('');
@@ -253,7 +253,7 @@ function mostrarApp() {
     tiendaTipo.innerHTML = '<option value="">Categoría</option>' +
         categoriasList.map(c => `<option value="${c}">${c}</option>`).join('');
 
-    // Rellenar desplegable de Nombres de Productos
+    // Productos
     const nombreSelect = document.getElementById('nombreSelect');
     nombreSelect.innerHTML = '<option value="">Selecciona un producto...</option>' +
         productosHabituales.map(p => `<option value="${p}">${p}</option>`).join('') +
@@ -264,7 +264,7 @@ function mostrarApp() {
         productosHabituales.map(p => `<option value="${p}">${p}</option>`).join('') +
         '<option value="OTRO">✏️ Otro (Escribir personalizado)</option>';
 
-    // Rellenar Tiendas
+    // Tiendas
     const tiendaSelect = document.getElementById('tiendaDestino');
     tiendaSelect.innerHTML = '<option value="">Selecciona una tienda</option>' +
         tiendas.map(t => `<option value="${t}">${t}</option>`).join('');
@@ -448,7 +448,6 @@ function renderizarTablaInventario() {
     document.getElementById('statCritical').textContent = criticalCount;
 }
 
-// Cargar y mostrar los equipos asignados a una tienda
 function cargarEquiposTienda(nombreTienda) {
     const tbody = document.getElementById('tablaTiendaBody');
     const titulo = document.getElementById('tiendaTituloTabla');
@@ -466,7 +465,6 @@ function cargarEquiposTienda(nombreTienda) {
     const tiendaRef = ref(db, `tiendas/${nombreTienda}/equipos`);
     onValue(tiendaRef, (snapshot) => {
         const equipos = snapshot.val() || {};
-        tiendaEquiposGlobal = equipos;
         tbody.innerHTML = "";
         
         const ids = Object.keys(equipos);
@@ -563,7 +561,6 @@ function exportarExcel() {
 }
 
 function iniciarLogica() {
-    // Formulario Entrada Inventario
     const form = document.getElementById('productForm');
     form.onsubmit = (e) => {
         e.preventDefault();
@@ -606,7 +603,6 @@ function iniciarLogica() {
         }
     };
 
-    // Formulario Dispositivo en Tienda
     const tiendaForm = document.getElementById('tiendaForm');
     tiendaForm.onsubmit = (e) => {
         e.preventDefault();
