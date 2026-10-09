@@ -34,7 +34,7 @@
     <!-- Toast Container -->
     <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
-    <!-- Banner -->
+    <!-- Header Banner -->
     <header class="w-full bg-brand-800 border-b-4 border-brand-700 py-4 px-6 text-center shadow-lg relative z-10">
         <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between">
             <div class="text-left">
@@ -88,7 +88,7 @@
                     <h1 class="text-3xl font-black text-brand-700 dark:text-brand-400 tracking-tight flex items-center gap-2">
                         <span>📦</span> Panel de Control
                     </h1>
-                    <p class="text-slate-500 dark:text-slate-400 text-sm mt-0.5">Control de inventario en tiempo real sincronizado</p>
+                    <p class="text-slate-500 dark:text-slate-400 text-sm mt-0.5">Gestión de inventario y equipamiento por tiendas</p>
                 </div>
                 <div class="flex flex-wrap items-center gap-3">
                     <div class="inline-flex items-center gap-2 bg-emerald-50 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300 px-4 py-2 rounded-full border-2 border-brand-500/20 font-extrabold text-xs uppercase tracking-wider">
@@ -103,7 +103,23 @@
                 </div>
             </div>
 
-            <!-- Stats Quick Grid -->
+            <!-- NAVEGACIÓN POR PESTAÑAS -->
+            <div class="flex flex-wrap gap-2 border-b-2 border-slate-200 dark:border-slate-800 pb-2">
+                <button id="tabBtnInventario" class="px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition bg-brand-600 text-white shadow-md cursor-pointer">
+                    📦 Inventario Actual
+                </button>
+                <button id="tabBtnNuevo" class="px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-brand-100 hover:text-brand-700 cursor-pointer">
+                    ➕ Añadir Entrada
+                </button>
+                <button id="tabBtnTiendas" class="px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-brand-100 hover:text-brand-700 cursor-pointer">
+                    🏬 Equipamiento Tiendas
+                </button>
+                <button id="tabBtnActividad" class="px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-brand-100 hover:text-brand-700 cursor-pointer">
+                    ⚡ Actividad
+                </button>
+            </div>
+
+            <!-- STATS GRID -->
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md p-5 rounded-2xl shadow-lg border border-brand-500/10 flex items-center gap-4">
                     <div class="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 rounded-xl flex items-center justify-center text-xl font-bold">📊</div>
@@ -128,130 +144,252 @@
                 </div>
             </div>
 
-            <!-- Add Product Section -->
-            <div class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-2xl p-6 shadow-xl border border-brand-500/10">
-                <h3 class="text-lg font-extrabold text-brand-700 dark:text-brand-400 mb-4 flex items-center gap-2">
-                    <span>➕</span> Añadir Nuevo Producto
-                </h3>
-                <form id="productForm" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-2">Categoría</label>
-                        <select id="tipoProducto" required class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-brand-500 focus:outline-none transition text-sm font-medium">
-                            <option value="">Selecciona categoría</option>
+            <!-- PESTAÑA 1: INVENTARIO ACTUAL -->
+            <div id="tabInventarioSection" class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-2xl p-5 shadow-xl border border-brand-500/15">
+                <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4 mb-6">
+                    <h3 class="text-lg font-extrabold text-brand-700 dark:text-brand-400 flex items-center gap-2">
+                        <span>📋</span> Lista de Inventario
+                    </h3>
+                    
+                    <div class="flex flex-wrap items-center gap-2">
+                        <div class="relative w-full sm:w-48">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">🔍</span>
+                            <input type="text" id="searchInput" placeholder="Buscar..." class="w-full pl-9 pr-4 py-2 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium focus:border-brand-500 focus:outline-none transition">
+                        </div>
+                        <select id="filterTipo" class="px-3 py-2 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold focus:border-brand-500 focus:outline-none transition">
+                            <option value="">Todas las categorías</option>
                         </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-2">Nº de Serie</label>
-                        <input type="text" id="ref" required placeholder="Ej. SN-00123" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-brand-500 focus:outline-none transition text-sm font-medium">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-2">Nombre</label>
-                        <input type="text" id="nombre" required placeholder="Nombre del producto" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-brand-500 focus:outline-none transition text-sm font-medium">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-2">Cantidad</label>
-                        <input type="number" id="stock" required min="0" value="0" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-brand-500 focus:outline-none transition text-sm font-medium">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-2">Ubicación</label>
-                        <select id="ubicacionProducto" required class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-brand-500 focus:outline-none transition text-sm font-medium">
-                            <option value="">Selecciona ubicación</option>
+                        <select id="filterUbicacion" class="px-3 py-2 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold focus:border-brand-500 focus:outline-none transition">
+                            <option value="">Todas las ubicaciones</option>
                             <option value="ALMACÉN">ALMACÉN</option>
                             <option value="ARMARIO">ARMARIO</option>
                         </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-2">Estado</label>
-                        <select id="estadoProducto" required class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-brand-500 focus:outline-none transition text-sm font-medium">
-                            <option value="">Selecciona estado</option>
+                        <select id="filterEstado" class="px-3 py-2 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold focus:border-brand-500 focus:outline-none transition">
+                            <option value="">Todos los estados</option>
                             <option value="Nuevo">Nuevo</option>
                             <option value="Usado">Usado</option>
                         </select>
+                        <button id="btnClearFilters" type="button" class="px-3 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-brand-50 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 border-2 border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold transition">↺ Limpiar</button>
                     </div>
-                    <div class="flex items-end">
-                        <button type="submit" class="w-full py-3 bg-gradient-to-r from-brand-500 to-brand-700 hover:from-brand-600 hover:to-brand-800 text-white font-bold rounded-xl shadow-md transition uppercase tracking-wider text-sm cursor-pointer">
-                            Añadir Stock
+                </div>
+
+                <div class="rounded-xl border border-slate-100 dark:border-slate-800 overflow-x-auto">
+                    <table class="w-full border-collapse text-left text-xs">
+                        <thead>
+                            <tr class="bg-slate-50 dark:bg-slate-800/80 text-brand-700 dark:text-brand-400 uppercase text-[10px] font-black tracking-wider border-b border-slate-200 dark:border-slate-700">
+                                <th class="py-3 px-3">Nº de Serie</th>
+                                <th class="py-3 px-3">Producto</th>
+                                <th class="py-3 px-3">Categoría</th>
+                                <th class="py-3 px-3 text-center">Precio Unit.</th>
+                                <th class="py-3 px-3 text-center">Fecha Entrada</th>
+                                <th class="py-3 px-3">Ubicación</th>
+                                <th class="py-3 px-3 text-center">Estado</th>
+                                <th class="py-3 px-3 text-center">Stock</th>
+                                <th class="py-3 px-3 text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventoryTable" class="divide-y divide-slate-100 dark:divide-slate-800">
+                            <tr><td colspan="9" class="text-center py-10 text-slate-400 font-medium">Cargando productos...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- PESTAÑA 2: AÑADIR ENTRADA / PEDIDO -->
+            <div id="tabNuevoSection" class="hidden bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-2xl p-6 sm:p-8 shadow-xl border border-brand-500/10">
+                <h3 class="text-xl font-black text-brand-700 dark:text-brand-400 mb-2 flex items-center gap-2">
+                    <span>➕</span> Registrar Nuevo Artículo / Pedido
+                </h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mb-6 font-medium">Los artículos añadidos guardarán automáticamente la fecha y hora exacta de registro.</p>
+
+                <form id="productForm" class="space-y-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                        
+                        <div>
+                            <label class="block text-xs font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-2">Categoría *</label>
+                            <select id="tipoProducto" required class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-brand-500 focus:outline-none transition text-sm font-medium">
+                                <option value="">Selecciona categoría</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-2">Nombre del Producto *</label>
+                            <select id="nombreSelect" required class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-brand-500 focus:outline-none transition text-sm font-medium">
+                                <option value="">Selecciona un producto...</option>
+                            </select>
+                        </div>
+
+                        <div id="nombreCustomContainer" class="hidden">
+                            <label class="block text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider mb-2">Escribe el Nombre *</label>
+                            <input type="text" id="nombreCustom" placeholder="Nombre completo del producto" class="w-full px-4 py-3 bg-amber-50/50 dark:bg-slate-800 border-2 border-amber-300 dark:border-amber-600 rounded-xl focus:border-brand-500 focus:outline-none transition text-sm font-medium">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-2">Nº de Serie / Ref. *</label>
+                            <input type="text" id="ref" required placeholder="Ej. SN-00123" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-brand-500 focus:outline-none transition text-sm font-medium">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-2">Precio (€) *</label>
+                            <input type="number" id="precio" step="0.01" min="0" required placeholder="0.00" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-brand-500 focus:outline-none transition text-sm font-medium">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-2">Cantidad Inicial *</label>
+                            <input type="number" id="stock" required min="1" value="1" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-brand-500 focus:outline-none transition text-sm font-medium">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-2">Ubicación *</label>
+                            <select id="ubicacionProducto" required class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-brand-500 focus:outline-none transition text-sm font-medium">
+                                <option value="">Selecciona ubicación</option>
+                                <option value="ALMACÉN">ALMACÉN</option>
+                                <option value="ARMARIO">ARMARIO</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-2">Estado *</label>
+                            <select id="estadoProducto" required class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-brand-500 focus:outline-none transition text-sm font-medium">
+                                <option value="">Selecciona estado</option>
+                                <option value="Nuevo">Nuevo</option>
+                                <option value="Usado">Usado</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-2">Comentario / Notas de Entrada (Opcional)</label>
+                        <textarea id="comentarioEntrada" rows="2" placeholder="Notas sobre la compra, proveedor, lote..." class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-brand-500 focus:outline-none transition text-sm font-medium resize-none"></textarea>
+                    </div>
+
+                    <div class="flex justify-end">
+                        <button type="submit" class="px-8 py-3.5 bg-gradient-to-r from-brand-500 to-brand-700 hover:from-brand-600 hover:to-brand-800 text-white font-bold rounded-xl shadow-lg transition uppercase tracking-wider text-xs cursor-pointer">
+                            💾 Guardar en Stock
                         </button>
                     </div>
                 </form>
             </div>
 
-            <!-- Main Layout Grid -->
-            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                
-                <!-- Inventory List Table -->
-                <div class="lg:col-span-3 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-2xl p-5 shadow-xl border border-brand-500/15 flex flex-col min-w-0">
-                    <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4 mb-6">
-                        <h3 class="text-lg font-extrabold text-brand-700 dark:text-brand-400 flex items-center gap-2">
-                            <span>📋</span> Inventario Actual
-                        </h3>
-                        
-                        <!-- FILTROS DE BÚSQUEDA Y CATEGORÍA -->
-                        <div class="flex flex-nowrap items-center gap-2 w-full overflow-hidden">
-                            <div class="relative flex-1 sm:w-48">
-                                <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">🔍</span>
-                                <input type="text" id="searchInput" placeholder="Buscar..." class="w-full pl-9 pr-4 py-2 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium focus:border-brand-500 focus:outline-none transition">
-                            </div>
-                            <div class="sm:w-48">
-                                <select id="filterTipo" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold focus:border-brand-500 focus:outline-none transition">
-                                    <option value="">Todas las categorías</option>
-                                </select>
-                            </div>
-                            <div class="sm:w-40">
-                                <select id="filterUbicacion" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold focus:border-brand-500 focus:outline-none transition">
-                                    <option value="">Todas las ubicaciones</option>
-                                    <option value="ALMACÉN">ALMACÉN</option>
-                                    <option value="ARMARIO">ARMARIO</option>
-                                </select>
-                            </div>
-                            <div class="sm:w-36 flex-shrink-0">
-                                <select id="filterEstado" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold focus:border-brand-500 focus:outline-none transition">
-                                    <option value="">Todos los estados</option>
-                                    <option value="Nuevo">Nuevo</option>
-                                    <option value="Usado">Usado</option>
-                                    <option value="Sin indicar">Sin indicar</option>
-                                </select>
-                            </div>
-                            <button id="btnClearFilters" type="button" class="flex-shrink-0 px-3 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-brand-50 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-brand-600 border-2 border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold transition whitespace-nowrap" title="Borrar todos los filtros">↺ Limpiar filtros</button>
+            <!-- PESTAÑA 3: GESTIÓN DE TIENDAS -->
+            <div id="tabTiendasSection" class="hidden space-y-6">
+                <!-- Selector de Tienda y Métricas -->
+                <div class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-2xl p-6 shadow-xl border border-brand-500/15 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div class="w-full md:w-1/2">
+                        <label class="block text-xs font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-2">Seleccionar Tienda</label>
+                        <select id="selectTiendaModulo" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-brand-500 focus:outline-none transition font-bold text-sm">
+                            <option value="">Selecciona una tienda corporativa...</option>
+                        </select>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="bg-emerald-50 dark:bg-brand-900/30 p-3 px-5 rounded-xl border border-brand-500/20 text-center">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase">Equipos en Tienda</p>
+                            <h4 id="statTiendaTotalEquipos" class="text-xl font-black text-brand-700 dark:text-brand-400">0</h4>
+                        </div>
+                        <div class="bg-blue-50 dark:bg-blue-900/30 p-3 px-5 rounded-xl border border-blue-500/20 text-center">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase">Valor Total Estimado</p>
+                            <h4 id="statTiendaValorTotal" class="text-xl font-black text-blue-700 dark:text-blue-400">0.00 €</h4>
                         </div>
                     </div>
+                </div>
 
-                    <div class="flex-1 rounded-xl border border-slate-100 dark:border-slate-800 overflow-hidden">
-                        <table class="w-full border-collapse text-left text-xs table-fixed">
+                <!-- Formulario Añadir Equipo a Tienda -->
+                <div class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-2xl p-6 shadow-xl border border-brand-500/10">
+                    <h4 class="text-md font-extrabold text-brand-700 dark:text-brand-400 mb-4 flex items-center gap-2">
+                        <span>➕</span> Asignar Nuevo Equipo a Tienda
+                    </h4>
+                    <form id="tiendaForm" class="space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div>
+                                <label class="block text-[11px] font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-1">Categoría *</label>
+                                <select id="tiendaTipo" required class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium focus:border-brand-500 focus:outline-none">
+                                    <option value="">Categoría</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-1">Dispositivo *</label>
+                                <select id="tiendaNombreSelect" required class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium focus:border-brand-500 focus:outline-none">
+                                    <option value="">Selecciona dispositivo...</option>
+                                </select>
+                            </div>
+                            <div id="tiendaNombreCustomContainer" class="hidden">
+                                <label class="block text-[11px] font-bold text-amber-600 uppercase tracking-wider mb-1">Escribe Dispositivo *</label>
+                                <input type="text" id="tiendaNombreCustom" placeholder="Nombre completo" class="w-full px-3 py-2 bg-amber-50/50 dark:bg-slate-800 border border-amber-300 rounded-xl text-xs font-medium">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-1">Nº de Serie / Ref. *</label>
+                                <input type="text" id="tiendaRef" required placeholder="Ej. SN-00123" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium focus:border-brand-500 focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-1">Precio (€) *</label>
+                                <input type="number" id="tiendaPrecio" step="0.01" min="0" required placeholder="0.00" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium focus:border-brand-500 focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-1">Cantidad *</label>
+                                <input type="number" id="tiendaCantidad" min="1" value="1" required class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium focus:border-brand-500 focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-1">Estado *</label>
+                                <select id="tiendaEstado" required class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium focus:border-brand-500 focus:outline-none">
+                                    <option value="Nuevo">Nuevo</option>
+                                    <option value="Usado">Usado</option>
+                                </select>
+                            </div>
+                            <div class="sm:col-span-2">
+                                <label class="block text-[11px] font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-1">Observaciones / Ubicación en Tienda</label>
+                                <input type="text" id="tiendaNotas" placeholder="Ej. TPV Caja 1, Cocina..." class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium focus:border-brand-500 focus:outline-none">
+                            </div>
+                        </div>
+                        <div class="flex justify-end">
+                            <button type="submit" class="px-6 py-2.5 bg-gradient-to-r from-brand-500 to-brand-700 hover:from-brand-600 hover:to-brand-800 text-white font-bold rounded-xl shadow-md text-xs uppercase tracking-wider cursor-pointer">
+                                ➕ Añadir Dispositivo a Tienda
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Tabla Dispositivos Tienda -->
+                <div class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-2xl p-5 shadow-xl border border-brand-500/15">
+                    <h4 id="tiendaTituloTabla" class="text-md font-extrabold text-brand-700 dark:text-brand-400 mb-4">
+                        📋 Equipos Instalados en Tienda
+                    </h4>
+                    <div class="rounded-xl border border-slate-100 dark:border-slate-800 overflow-x-auto">
+                        <table class="w-full border-collapse text-left text-xs">
                             <thead>
                                 <tr class="bg-slate-50 dark:bg-slate-800/80 text-brand-700 dark:text-brand-400 uppercase text-[10px] font-black tracking-wider border-b border-slate-200 dark:border-slate-700">
-                                    <th class="py-3 px-2 w-[12%]">Nº de Serie</th>
-                                    <th class="py-3 px-2 w-[17%]">Producto</th>
-                                    <th class="py-3 px-2 w-[10%]">Categoría</th>
-                                    <th class="py-3 px-2 w-[10%]">Ubicación</th>
-                                    <th class="py-3 px-2 text-center w-[10%]">Estado</th>
-                                    <th class="py-3 px-2 text-center w-[11%]">Stock</th>
-                                    <th class="py-3 px-2 text-center w-[30%]">Acciones</th>
+                                    <th class="py-3 px-3">Categoría</th>
+                                    <th class="py-3 px-3">Dispositivo</th>
+                                    <th class="py-3 px-3">Nº Serie</th>
+                                    <th class="py-3 px-3 text-center">Precio Unit.</th>
+                                    <th class="py-3 px-3 text-center">Fecha Inst.</th>
+                                    <th class="py-3 px-3 text-center">Estado</th>
+                                    <th class="py-3 px-3 text-center">Cantidad</th>
+                                    <th class="py-3 px-3 text-center">Acción</th>
                                 </tr>
                             </thead>
-                            <tbody id="inventoryTable" class="divide-y divide-slate-100 dark:divide-slate-800">
-                                <tr><td colspan="7" class="text-center py-10 text-slate-400 font-medium">Cargando productos...</td></tr>
+                            <tbody id="tablaTiendaBody" class="divide-y divide-slate-100 dark:divide-slate-800">
+                                <tr><td colspan="8" class="text-center py-10 text-slate-400 font-medium">Selecciona una tienda arriba para ver sus equipos.</td></tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
-
-                <!-- Activity Log Sidebar -->
-                <div class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-2xl p-6 shadow-xl border border-brand-500/15 flex flex-col">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-extrabold text-brand-700 dark:text-brand-400 flex items-center gap-2">
-                            <span>⚡</span> Actividad Reciente
-                        </h3>
-                        <button id="btnClearLogs" title="Reiniciar Actividad" class="text-xs bg-slate-100 dark:bg-slate-800 hover:bg-red-100 hover:text-red-600 text-slate-500 px-2.5 py-1 rounded-full font-bold transition uppercase tracking-wide cursor-pointer border border-slate-200 dark:border-slate-700">
-                            🗑️ Limpiar
-                        </button>
-                    </div>
-                    <div id="logsContainer" class="flex-1 overflow-y-auto max-h-[460px] space-y-3 pr-1">
-                        <p class="text-center text-slate-400 py-10 text-xs font-medium">Sin actividad reciente.</p>
-                    </div>
-                </div>
-
             </div>
+
+            <!-- PESTAÑA 4: ACTIVIDAD -->
+            <div id="tabActividadSection" class="hidden bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-2xl p-6 shadow-xl border border-brand-500/15">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-lg font-extrabold text-brand-700 dark:text-brand-400 flex items-center gap-2">
+                        <span>⚡</span> Registro de Actividad y Cambios
+                    </h3>
+                    <button id="btnClearLogs" class="text-xs bg-slate-100 dark:bg-slate-800 hover:bg-red-100 hover:text-red-600 text-slate-500 px-3 py-1.5 rounded-xl font-bold transition uppercase tracking-wide cursor-pointer border border-slate-200 dark:border-slate-700">
+                        🗑️ Limpiar Historial
+                    </button>
+                </div>
+                <div id="logsContainer" class="space-y-3">
+                    <p class="text-center text-slate-400 py-10 text-xs font-medium">Sin actividad reciente.</p>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -283,42 +421,35 @@
 
     <!-- MODAL CONFIRMAR ELIMINACIÓN -->
     <div id="eliminarModal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-[100] hidden items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-900 rounded-[28px] p-8 max-w-md w-full shadow-[0_25px_80px_rgba(0,0,0,0.30)] border border-slate-200 dark:border-slate-700 text-center transform transition-all">
-            <div class="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/30 ring-8 ring-red-50 dark:ring-red-900/10">
+        <div class="bg-white dark:bg-slate-900 rounded-[28px] p-8 max-w-md w-full shadow-2xl border border-slate-200 dark:border-slate-700 text-center">
+            <div class="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/30">
                 <span class="text-3xl">🗑️</span>
             </div>
-            <div class="inline-flex items-center gap-2 rounded-full bg-red-50 dark:bg-red-900/20 px-3 py-1 mb-3 text-[10px] font-black uppercase tracking-widest text-red-600 dark:text-red-400">
-                Acción irreversible
-            </div>
             <h3 class="text-2xl font-black text-slate-800 dark:text-slate-100 mb-2">¿Estás seguro?</h3>
-            <p class="text-sm leading-6 text-slate-500 dark:text-slate-400 mb-1">Vas a eliminar este producto del inventario.</p>
-            <p id="eliminarModalProducto" class="mx-auto max-w-[90%] rounded-xl bg-slate-50 dark:bg-slate-800 px-4 py-3 font-black text-slate-800 dark:text-slate-100 text-base mb-7 break-words"></p>
+            <p id="eliminarModalProducto" class="rounded-xl bg-slate-50 dark:bg-slate-800 px-4 py-3 font-black text-slate-800 dark:text-slate-100 text-sm mb-6"></p>
             <div class="flex gap-3 justify-center">
-                <button id="btnCancelarEliminar" type="button" class="flex-1 px-5 py-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold text-slate-700 dark:text-slate-200 rounded-xl text-xs uppercase tracking-wider transition cursor-pointer">Cancelar</button>
-                <button id="btnConfirmarEliminar" type="button" class="flex-1 px-5 py-3 bg-red-500 hover:bg-red-600 text-white font-bold rounded-xl text-xs uppercase tracking-wider shadow-lg shadow-red-500/20 transition cursor-pointer">Sí, eliminar</button>
+                <button id="btnCancelarEliminar" type="button" class="flex-1 px-5 py-3 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-xl text-xs uppercase tracking-wider font-bold">Cancelar</button>
+                <button id="btnConfirmarEliminar" type="button" class="flex-1 px-5 py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl text-xs uppercase tracking-wider font-bold shadow-lg">Sí, eliminar</button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL CONFIRMAR VACIADO DE ACTIVIDAD -->
+    <!-- MODAL CONFIRMAR VACIADO ACTIVIDAD -->
     <div id="actividadModal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-[110] hidden items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-900 rounded-[28px] p-8 max-w-md w-full shadow-[0_25px_80px_rgba(0,0,0,0.30)] border border-slate-200 dark:border-slate-700 text-center">
-            <div class="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-900/30 ring-8 ring-amber-50 dark:ring-amber-900/10">
+        <div class="bg-white dark:bg-slate-900 rounded-[28px] p-8 max-w-md w-full shadow-2xl border border-slate-200 dark:border-slate-700 text-center">
+            <div class="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-900/30">
                 <span class="text-3xl">🧹</span>
             </div>
-            <div class="inline-flex items-center gap-2 rounded-full bg-amber-50 dark:bg-amber-900/20 px-3 py-1 mb-3 text-[10px] font-black uppercase tracking-widest text-amber-600 dark:text-amber-400">
-                Limpiar actividad
-            </div>
             <h3 class="text-2xl font-black text-slate-800 dark:text-slate-100 mb-2">¿Vaciar actividad reciente?</h3>
-            <p class="text-sm leading-6 text-slate-500 dark:text-slate-400 mb-7">Se eliminará todo el registro de actividad reciente. Esta acción no se puede deshacer.</p>
+            <p class="text-sm text-slate-500 mb-6">Esta acción borrará todo el registro del historial.</p>
             <div class="flex gap-3 justify-center">
-                <button id="btnCancelarActividad" type="button" class="flex-1 px-5 py-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold text-slate-700 dark:text-slate-200 rounded-xl text-xs uppercase tracking-wider transition cursor-pointer">Cancelar</button>
-                <button id="btnConfirmarActividad" type="button" class="flex-1 px-5 py-3 bg-red-500 hover:bg-red-600 text-white font-bold rounded-xl text-xs uppercase tracking-wider shadow-lg shadow-red-500/20 transition cursor-pointer">Sí, vaciar</button>
+                <button id="btnCancelarActividad" type="button" class="flex-1 px-5 py-3 bg-slate-100 dark:bg-slate-800 font-bold rounded-xl text-xs uppercase">Cancelar</button>
+                <button id="btnConfirmarActividad" type="button" class="flex-1 px-5 py-3 bg-red-500 text-white font-bold rounded-xl text-xs uppercase shadow-lg">Sí, vaciar</button>
             </div>
         </div>
     </div>
 
-    <!-- Script JavaScript Externo -->
+    <!-- Script JavaScript -->
     <script type="module" src="script.js"></script>
 </body>
 </html>
