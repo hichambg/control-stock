@@ -46,7 +46,6 @@ let descuentoPendiente = null;
 let inventarioGlobal = {};
 let cantidadesFila = {};
 let dispositivosPorCategoriaGlobal = {};
-let contextoOrigenNuevo = 'entrada'; // 'entrada' o 'tienda'
 
 function init() {
     try {
@@ -93,24 +92,13 @@ function init() {
         actualizarDesplegableDispositivos('tiendaNombreSelect', e.target.value);
     });
 
-    // EVENTOS ABRIR MODAL NUEVO DISPOSITIVO
+    // EVENTO ABRIR MODAL DESDE PESTAÑA AÑADIR ENTRADA
     document.getElementById('btnCrearNuevoDispositivoEntrada').addEventListener('click', () => {
         const cat = document.getElementById('tipoProducto').value;
         if (!cat) {
             showToast("Selecciona primero una categoría", "error");
             return;
         }
-        contextoOrigenNuevo = 'entrada';
-        abrirModalNuevoDispositivo(cat);
-    });
-
-    document.getElementById('btnCrearNuevoDispositivo').addEventListener('click', () => {
-        const cat = document.getElementById('tiendaTipo').value;
-        if (!cat) {
-            showToast("Selecciona primero una categoría", "error");
-            return;
-        }
-        contextoOrigenNuevo = 'tienda';
         abrirModalNuevoDispositivo(cat);
     });
 
@@ -707,7 +695,7 @@ function iniciarLogica() {
         });
 
         if (!nombreFinal) {
-            showToast("Selecciona o añade un dispositivo", "error");
+            showToast("Selecciona un dispositivo", "error");
             return;
         }
 
