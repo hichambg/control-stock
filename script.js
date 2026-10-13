@@ -21,15 +21,6 @@ const categoriasList = [
     "Servidor", "Switch", "Tablet", "Teclado", "Telefonos", "TPV", "UPS FoodTruck"
 ];
 
-const productosHabituales = [
-    "ADOC NEO 3850W", "ADOC BT02 PRO", "TH10B", "ADOC HC01", "SALICRU SPS900ONE",
-    "XD5-40D", "XD3-40T", "SRP-350PLUSVK", "NCR CX5", "NCR P1535", "NCR P1532",
-    "Seypos 675", "Cajón Seypos", "KC3", "Acepc", "Toshiba", "NCR N3000",
-    "Fujitsu 21\"", "Samsung Menuboard", "Meraki MX67", "TPLink MR6400",
-    "THUNDERBOOK", "Videograbador Dahua", "Lenovo TB850SF", "Samsung SM-T225",
-    "HP EliteBook", "Lenovo V15 G5", "Teclado MK120", "Raton NGS"
-];
-
 const tiendas = [
     "SERRANO", "PRINCIPE", "PESETA", "SILVANO", "SANSE", "ALBUFERA", "SANCHINARRO", "VALLEJO",
     "GETAFE EL BERCIAL", "ALCORCON NORTE", "MOSTOLES NORTE", "ANTRACITA", "SUECIA", "TORREJON",
@@ -53,6 +44,7 @@ let db, usuarioActual = localStorage.getItem('stock_user') || '';
 let descuentoPendiente = null;
 let inventarioGlobal = {};
 let cantidadesFila = {};
+let listaDispositivosManuales = [];
 
 function init() {
     try {
@@ -84,35 +76,45 @@ function init() {
     document.getElementById('btnCancelarActividad').addEventListener('click', cerrarModalActividad);
     document.getElementById('btnConfirmarActividad').addEventListener('click', confirmarReinicioActividad);
 
-    // BINDING DE PESTAÑAS (CORREGIDO)
+    // BINDING DE PESTAÑAS
     document.getElementById('tabBtnInventario').addEventListener('click', () => cambiarPestana('inventario'));
     document.getElementById('tabBtnNuevo').addEventListener('click', () => cambiarPestana('nuevo'));
     document.getElementById('tabBtnTiendas').addEventListener('click', () => cambiarPestana('tiendas'));
     document.getElementById('tabBtnActividad').addEventListener('click', () => cambiarPestana('actividad'));
 
-    // Desplegable de nombre de producto (Entradas)
-    document.getElementById('nombreSelect').addEventListener('change', (e) => {
-        const customContainer = document.getElementById('nombreCustomContainer');
-        const customInput = document.getElementById('nombreCustom');
-        if (e.target.value === 'OTRO') {
-            customContainer.classList.remove('hidden');
-            customInput.required = true;
-        } else {
-            customContainer.classList.add('hidden');
-            customInput.required = false;
+    // EVENTOS CREACIÓN MANUAL DE DISPOSITIVOS
+    ['btnCrearNuevoDispositivo', 'btnCrearNuevoDispositivoEntrada'].forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) {
+            btn.addEventListener('click', () => {
+                document.getElementById('inputNuevoNombreDispositivo').value = '';
+                document.getElementById('modalNuevoDispositivo').classList.remove('hidden');
+                document.getElementById('modalNuevoDispositivo').classList.add('flex');
+            });
         }
     });
 
-    // Desplegable de nombre de producto (Tiendas)
-    document.getElementById('tiendaNombreSelect').addEventListener('change', (e) => {
-        const container = document.getElementById('tiendaNombreCustomContainer');
-        const input = document.getElementById('tiendaNombreCustom');
-        if (e.target.value === 'OTRO') {
-            container.classList.remove('hidden');
-            input.required = true;
-        } else {
-            container.classList.add('hidden');
-            input.required = false;
+    document.getElementById('btnCancelarNuevoDispositivo').addEventListener('click', () => {
+        document.getElementById('modalNuevoDispositivo').classList.add('hidden');
+        document.getElementById('modalNuevoDispositivo').classList.remove('flex');
+    });
+
+    document.getElementById('btnGuardarNuevoDispositivo').addEventListener('click', async () => {
+        const nuevoNombre = document.getElementById('inputNuevoNombreDispositivo').value.trim();
+        if (!nuevoNombre) {
+            showToast("Escribe un nombre válido", "error");
+            return;
+        }
+
+        try {
+            const dispRef = push(ref(db, 'dispositivos_lista'));
+            await set(dispRef, { nombre: nuevoNombre });
+
+            document.getElementById('modalNuevoDispositivo').classList.add('hidden');
+            document.getElementById('modalNuevoDispositivo').classList.remove('flex');
+            showToast(`Dispositivo "${nuevoNombre}" guardado`);
+        } catch (e) {
+            showToast("Error al guardar dispositivo", "error");
         }
     });
 
@@ -253,17 +255,6 @@ function mostrarApp() {
     tiendaTipo.innerHTML = '<option value="">Categoría</option>' +
         categoriasList.map(c => `<option value="${c}">${c}</option>`).join('');
 
-    // Productos
-    const nombreSelect = document.getElementById('nombreSelect');
-    nombreSelect.innerHTML = '<option value="">Selecciona un producto...</option>' +
-        productosHabituales.map(p => `<option value="${p}">${p}</option>`).join('') +
-        '<option value="OTRO">✏️ Otro (Escribir nombre personalizado)</option>';
-
-    const tiendaNombreSelect = document.getElementById('tiendaNombreSelect');
-    tiendaNombreSelect.innerHTML = '<option value="">Selecciona dispositivo...</option>' +
-        productosHabituales.map(p => `<option value="${p}">${p}</option>`).join('') +
-        '<option value="OTRO">✏️ Otro (Escribir personalizado)</option>';
-
     // Tiendas
     const tiendaSelect = document.getElementById('tiendaDestino');
     tiendaSelect.innerHTML = '<option value="">Selecciona una tienda</option>' +
@@ -274,6 +265,22 @@ function mostrarApp() {
         tiendas.map(t => `<option value="${t}">${t}</option>`).join('');
 
     iniciarLogica();
+}
+
+function actualizarDesplegablesDispositivos() {
+    let opcionesHTML = '<option value="">Selecciona dispositivo...</option>';
+    
+    if (listaDispositivosManuales.length === 0) {
+        opcionesHTML += '<option value="" disabled>(Sin dispositivos, usa "➕ Nuevo Dispositivo")</option>';
+    } else {
+        opcionesHTML += listaDispositivosManuales.map(d => `<option value="${d}">${d}</option>`).join('');
+    }
+
+    const tiendaNombreSelect = document.getElementById('tiendaNombreSelect');
+    if (tiendaNombreSelect) tiendaNombreSelect.innerHTML = opcionesHTML;
+
+    const nombreSelect = document.getElementById('nombreSelect');
+    if (nombreSelect) nombreSelect.innerHTML = opcionesHTML;
 }
 
 function registrarLog(accion, comentario = '') {
@@ -566,9 +573,7 @@ function iniciarLogica() {
         e.preventDefault();
         
         const tipo = document.getElementById('tipoProducto').value;
-        const nombreSel = document.getElementById('nombreSelect').value;
-        const nombreCustom = document.getElementById('nombreCustom').value.trim();
-        const nombreFinal = nombreSel === 'OTRO' ? nombreCustom : nombreSel;
+        const nombreFinal = document.getElementById('nombreSelect').value;
 
         const referencia = document.getElementById('ref').value.trim();
         const precio = parseFloat(document.getElementById('precio').value) || 0;
@@ -582,7 +587,7 @@ function iniciarLogica() {
         });
 
         if (!nombreFinal) {
-            showToast("Por favor indica el nombre del producto", "error");
+            showToast("Por favor selecciona o añade un dispositivo", "error");
             return;
         }
 
@@ -594,7 +599,6 @@ function iniciarLogica() {
 
             registrarLog(`Añadió '${nombreFinal}' [Nº Serie: ${referencia}] - Precio: ${precio.toFixed(2)}€`, comentario);
             form.reset();
-            document.getElementById('nombreCustomContainer').classList.add('hidden');
             
             showToast("¡Artículo añadido con éxito!");
             cambiarPestana('inventario');
@@ -614,9 +618,7 @@ function iniciarLogica() {
         }
 
         const tipo = document.getElementById('tiendaTipo').value;
-        const nombreSel = document.getElementById('tiendaNombreSelect').value;
-        const nombreCustom = document.getElementById('tiendaNombreCustom').value.trim();
-        const nombreFinal = nombreSel === 'OTRO' ? nombreCustom : nombreSel;
+        const nombreFinal = document.getElementById('tiendaNombreSelect').value;
 
         const referencia = document.getElementById('tiendaRef').value.trim();
         const precio = parseFloat(document.getElementById('tiendaPrecio').value) || 0;
@@ -629,7 +631,7 @@ function iniciarLogica() {
         });
 
         if (!nombreFinal) {
-            showToast("Indica el nombre del dispositivo", "error");
+            showToast("Selecciona o añade un dispositivo", "error");
             return;
         }
 
@@ -641,7 +643,6 @@ function iniciarLogica() {
 
             registrarLog(`Asignó equipo '${nombreFinal}' (${cantidad} ud/s) a la tienda ${nombreTienda}`);
             tiendaForm.reset();
-            document.getElementById('tiendaNombreCustomContainer').classList.add('hidden');
             showToast(`Dispositivo asignado a ${nombreTienda}`);
         } catch (error) {
             showToast("Error al asignar equipo", "error");
@@ -709,6 +710,13 @@ function iniciarLogica() {
         } catch (error) {
             showToast("Error al eliminar", "error");
         }
+    });
+
+    // ESCUCHAR LISTA DE DISPOSITIVOS GUARDADOS EN FIREBASE
+    onValue(ref(db, 'dispositivos_lista'), (snapshot) => {
+        const data = snapshot.val() || {};
+        listaDispositivosManuales = Object.values(data).map(d => d.nombre);
+        actualizarDesplegablesDispositivos();
     });
 
     onValue(ref(db, 'inventario'), (snapshot) => {
