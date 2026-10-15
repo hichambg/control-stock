@@ -47,6 +47,10 @@ let inventarioGlobal = {};
 let cantidadesFila = {};
 let dispositivosPorCategoriaGlobal = {};
 
+// Nuevas estructuras para historial/actividad
+let historialGlobal = {};
+const selectedActivityTypes = new Set();
+
 function init() {
     try {
         const app = initializeApp(firebaseConfig);
@@ -143,6 +147,9 @@ function init() {
             container.classList.add('hidden');
         }
     });
+
+    // Actividad: inicializamos listeners para los filtros (tipo, fecha, usuario)
+    setupActividadUI();
 
     if (usuarioActual && db) mostrarApp();
 }
@@ -354,10 +361,12 @@ function registrarLog(accion, comentario = '') {
         const nuevoLogRef = push(logsRef);
         let detalle = accion;
         if (comentario) detalle += ` | Motivo/Nota: ${comentario}`;
+        // Guardamos también un timestamp numérico para filtrar por fecha de forma robusta
         set(nuevoLogRef, {
             usuario: usuarioActual,
             detalle: detalle,
-            fecha: new Date().toLocaleString([], { dateStyle: 'short', timeStyle: 'medium' })
+            fecha: new Date().toLocaleString([], { dateStyle: 'short', timeStyle: 'medium' }),
+            timestamp: Date.now()
         });
     } catch (e) {
         console.error("Error historial:", e);
@@ -473,10 +482,17 @@ function renderizarTablaInventario() {
         const ubicacion = (prod.ubicacion || 'Sin indicar').toString();
         const estado = (prod.estado || 'Sin indicar').toString();
 
-        const coincideTexto = !searchText || nombre.toLowerCase().includes(searchText) || referencia.toLowerCase().includes(searchText);
-        const coincideTipo = !filterTipo || tipo.toLowerCase() === filterTipo;
-        const coincideUbicacion = !filterUbicacion || ubicacion.toLowerCase() === filterUbicacion;
-        const coincideEstado = !filterEstado || estado.toLowerCase() === filterEstado;
+        // Comparaciones más tolerantes: normalizamos y usamos includes para evitar fallos por espacios/mayúsculas
+        const nombreLower = nombre.toLowerCase();
+        const referenciaLower = referencia.toLowerCase();
+        const tipoLower = tipo.toLowerCase();
+        const ubicacionLower = ubicacion.toLowerCase();
+        const estadoLower = estado.toLowerCase();
+
+        const coincideTexto = !searchText || nombreLower.includes(searchText) || referenciaLower.includes(searchText) || tipoLower.includes(searchText);
+        const coincideTipo = !filterTipo || tipoLower.includes(filterTipo);
+        const coincideUbicacion = !filterUbicacion || ubicacionLower.includes(filterUbicacion);
+        const coincideEstado = !filterEstado || estadoLower.includes(filterEstado);
 
         if (!coincideTexto || !coincideTipo || !coincideUbicacion || !coincideEstado) return;
 
@@ -798,27 +814,155 @@ function iniciarLogica() {
         renderizarTablaInventario();
     });
 
+    // HISTORIAL: guardamos localmente y renderizamos con filtros
     onValue(ref(db, 'historial'), (snapshot) => {
-        const logsContainer = document.getElementById('logsContainer');
-        logsContainer.innerHTML = "";
-        const data = snapshot.val();
-        if (!data) {
-            logsContainer.innerHTML = `<p class="text-center text-slate-400 py-10 text-xs font-medium">Sin actividad.</p>`;
-            return;
-        }
-        const logsArray = Object.values(data).reverse().slice(0, 25);
-        logsArray.forEach((log) => {
-            const div = document.createElement('div');
-            div.className = "bg-brand-50/50 dark:bg-slate-800/40 p-3.5 rounded-xl border-l-4 border-brand-500 text-xs shadow-sm";
-            div.innerHTML = `
-                <div class="flex justify-between items-center mb-1">
-                    <span class="font-black text-brand-700 dark:text-brand-400 uppercase tracking-wide">${log.usuario}</span>
-                    <span class="text-slate-400 text-[10px]">${log.fecha}</span>
-                </div>
-                <div class="text-slate-700 dark:text-slate-300 font-medium">${log.detalle}</div>
-            `;
-            logsContainer.appendChild(div);
+        historialGlobal = snapshot.val() || {};
+        // actualizar el panel de usuarios (checkboxes) con los usuarios que aparecen en el historial
+        renderUserFilterOptions();
+        renderizarLogs();
+    });
+}
+
+// --- Funciones para la UI y filtrado de actividad ---
+function setupActividadUI() {
+    // tipo-pill listeners (toggle)
+    const tipoPills = document.querySelectorAll('#tipoFiltroActividad .tipo-pill');
+    tipoPills.forEach(pill => {
+        pill.addEventListener('click', () => {
+            const val = pill.dataset.value;
+            if (selectedActivityTypes.has(val)) {
+                selectedActivityTypes.delete(val);
+                pill.classList.remove('bg-brand-600', 'text-white');
+            } else {
+                selectedActivityTypes.add(val);
+                pill.classList.add('bg-brand-600', 'text-white');
+            }
+            renderizarLogs();
         });
+    });
+
+    // fecha y aplicar/limpiar botones
+    document.getElementById('aplicarFiltrosActividad').addEventListener('click', () => renderizarLogs());
+    document.getElementById('limpiarFiltrosActividad').addEventListener('click', () => {
+        selectedActivityTypes.clear();
+        // quitar clases visuales
+        document.querySelectorAll('#tipoFiltroActividad .tipo-pill').forEach(p => p.classList.remove('bg-brand-600', 'text-white'));
+        document.getElementById('fechaDesde').value = '';
+        document.getElementById('fechaHasta').value = '';
+        document.getElementById('userFilterSearch').value = '';
+        // deseleccionar usuarios
+        document.querySelectorAll('#userFilterActividadContainer input[type="checkbox"]').forEach(cb => cb.checked = false);
+        renderizarLogs();
+    });
+
+    // búsqueda de usuario (texto)
+    document.getElementById('userFilterSearch').addEventListener('input', () => renderizarLogs());
+}
+
+function renderUserFilterOptions() {
+    const container = document.getElementById('userFilterActividadContainer');
+    container.innerHTML = '';
+    const users = new Set();
+    Object.values(historialGlobal).forEach(item => {
+        if (item && item.usuario) users.add(item.usuario);
+    });
+    const arr = Array.from(users).sort();
+    if (arr.length === 0) {
+        container.innerHTML = `<p class="text-[11px] text-slate-400">No hay usuarios registrados aún.</p>`;
+        return;
+    }
+    arr.forEach(u => {
+        const id = `user_filter_${u.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g,'')}`;
+        const div = document.createElement('div');
+        div.className = 'flex items-center gap-2';
+        div.innerHTML = `<input id="${id}" type="checkbox" value="${u}" /> <label for="${id}" class="text-[12px]">${u}</label>`;
+        container.appendChild(div);
+        // add change listener to re-render on user selection
+        div.querySelector('input').addEventListener('change', () => renderizarLogs());
+    });
+}
+
+function matchesTipo(detalle, tipoVal) {
+    if (!detalle) return false;
+    const d = detalle.toLowerCase();
+    // soportar etiquetas antiguas y nuevas
+    if (tipoVal === 'sacada' || tipoVal === 'salida') return d.includes('salida') || d.includes('salid') || d.includes('resta') || d.includes('−') || d.includes('-');
+    if (tipoVal === 'metida' || tipoVal === 'entrada') return d.includes('entrada') || d.includes('entrada') || d.includes('entrada') || d.includes('+');
+    if (tipoVal === 'eliminacion') return d.includes('elimin') || d.includes('eliminó') || d.includes('eliminado');
+    if (tipoVal === 'creacion') return d.includes('añad') || d.includes('crea') || d.includes('asign') || d.includes('añadi');
+    // fallback: check palabra
+    return d.includes(tipoVal);
+}
+
+function renderizarLogs() {
+    const logsContainer = document.getElementById('logsContainer');
+    logsContainer.innerHTML = '';
+
+    const data = historialGlobal;
+    if (!data || Object.keys(data).length === 0) {
+        logsContainer.innerHTML = `<p class="text-center text-slate-400 py-10 text-xs font-medium">Sin actividad.</p>`;
+        return;
+    }
+
+    // recoger filtros
+    const desdeVal = document.getElementById('fechaDesde').value; // yyyy-mm-dd
+    const hastaVal = document.getElementById('fechaHasta').value; // yyyy-mm-dd
+    const userSearch = (document.getElementById('userFilterSearch').value || '').toLowerCase().trim();
+
+    // usuarios seleccionados por checkbox
+    const selectedUsers = Array.from(document.querySelectorAll('#userFilterActividadContainer input[type="checkbox"]:checked')).map(i => i.value);
+
+    // convertir historial a array ordenado (más reciente primero)
+    const logsArray = Object.values(data).map(item => item).sort((a,b) => (b.timestamp || 0) - (a.timestamp || 0)).slice(0, 500);
+
+    // aplicar filtros
+    const filtered = logsArray.filter(log => {
+        if (!log) return false;
+        // filtro usuario por texto o checkboxes
+        if (selectedUsers.length > 0) {
+            if (!selectedUsers.includes(log.usuario)) return false;
+        } else if (userSearch) {
+            if (!log.usuario || !log.usuario.toLowerCase().includes(userSearch)) return false;
+        }
+
+        // filtro tipos
+        if (selectedActivityTypes.size > 0) {
+            let matchedAny = false;
+            for (const t of selectedActivityTypes) {
+                if (matchesTipo(log.detalle, t)) { matchedAny = true; break; }
+            }
+            if (!matchedAny) return false;
+        }
+
+        // filtro de fechas usando timestamp
+        if (desdeVal) {
+            const desdeTs = new Date(desdeVal + 'T00:00:00').getTime();
+            if (!log.timestamp || log.timestamp < desdeTs) return false;
+        }
+        if (hastaVal) {
+            const hastaTs = new Date(hastaVal + 'T23:59:59').getTime();
+            if (!log.timestamp || log.timestamp > hastaTs) return false;
+        }
+
+        return true;
+    }).slice(0, 100);
+
+    if (filtered.length === 0) {
+        logsContainer.innerHTML = `<p class="text-center text-slate-400 py-10 text-xs font-medium">No hay registros que coincidan con los filtros.</p>`;
+        return;
+    }
+
+    filtered.forEach((log) => {
+        const div = document.createElement('div');
+        div.className = "bg-brand-50/50 dark:bg-slate-800/40 p-3.5 rounded-xl border-l-4 border-brand-500 text-xs shadow-sm";
+        div.innerHTML = `
+            <div class="flex justify-between items-center mb-1">
+                <span class="font-black text-brand-700 dark:text-brand-400 uppercase tracking-wide">${log.usuario}</span>
+                <span class="text-slate-400 text-[10px]">${log.fecha || ''}</span>
+            </div>
+            <div class="text-slate-700 dark:text-slate-300 font-medium">${log.detalle}</div>
+        `;
+        logsContainer.appendChild(div);
     });
 }
 
