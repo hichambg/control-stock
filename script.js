@@ -310,7 +310,7 @@ function renderizarListaDispositivosModal(categoria) {
         div.className = "flex justify-between items-center bg-slate-50 dark:bg-slate-800 p-2 rounded-lg text-xs font-semibold border border-slate-200 dark:border-slate-700";
         div.innerHTML = `
             <span>${item.nombre}</span>
-            <button type="button" onclick="window.eliminarDispositivoCategoria('${categoria}', '${id}', '${item.nombre.replace(/'/g, "\\'")}')" class="text-red-500 hover:text-red-700 font-bold px-1.5 py-0.5 rounded hover:bg-red-50 dark:hover:bg-red-900/30 transition">🗑️</button>
+            <button type="button" onclick="window.eliminarDispositivoCategoria('${categoria}', '${id}', '${item.nombre.replace(/'/g, "\\'")}' )" class="text-red-500 hover:text-red-700 font-bold px-2">✕</button>
         `;
         container.appendChild(div);
     });
@@ -443,10 +443,10 @@ function filtrarInventario() {
 
 function renderizarTablaInventario() {
     const tableBody = document.getElementById('inventoryTable');
-    const searchText = document.getElementById('searchInput').value.toLowerCase().trim();
-    const filterTipo = document.getElementById('filterTipo').value;
-    const filterUbicacion = document.getElementById('filterUbicacion').value;
-    const filterEstado = document.getElementById('filterEstado').value;
+    const searchText = (document.getElementById('searchInput').value || '').toLowerCase().trim();
+    const filterTipo = (document.getElementById('filterTipo').value || '').toLowerCase().trim();
+    const filterUbicacion = (document.getElementById('filterUbicacion').value || '').toLowerCase().trim();
+    const filterEstado = (document.getElementById('filterEstado').value || '').toLowerCase().trim();
 
     tableBody.innerHTML = "";
     const ids = Object.keys(inventarioGlobal);
@@ -462,17 +462,21 @@ function renderizarTablaInventario() {
     let countRendered = 0;
 
     ids.forEach((id) => {
-        const prod = inventarioGlobal[id];
+        const prod = inventarioGlobal[id] || {};
         totalItems++;
         totalStock += Number(prod.stock || 0);
         if (Number(prod.stock || 0) < 5) criticalCount++;
 
-        const coincideTexto = !searchText || prod.nombre.toLowerCase().includes(searchText) || prod.referencia.toLowerCase().includes(searchText);
-        const coincideTipo = !filterTipo || prod.tipo === filterTipo;
-        const ubicacion = prod.ubicacion || 'Sin indicar';
-        const estado = prod.estado || 'Sin indicar';
-        const coincideUbicacion = !filterUbicacion || ubicacion === filterUbicacion;
-        const coincideEstado = !filterEstado || estado === filterEstado;
+        const nombre = (prod.nombre || '').toString();
+        const referencia = (prod.referencia || '').toString();
+        const tipo = (prod.tipo || '').toString();
+        const ubicacion = (prod.ubicacion || 'Sin indicar').toString();
+        const estado = (prod.estado || 'Sin indicar').toString();
+
+        const coincideTexto = !searchText || nombre.toLowerCase().includes(searchText) || referencia.toLowerCase().includes(searchText);
+        const coincideTipo = !filterTipo || tipo.toLowerCase() === filterTipo;
+        const coincideUbicacion = !filterUbicacion || ubicacion.toLowerCase() === filterUbicacion;
+        const coincideEstado = !filterEstado || estado.toLowerCase() === filterEstado;
 
         if (!coincideTexto || !coincideTipo || !coincideUbicacion || !coincideEstado) return;
 
@@ -480,7 +484,6 @@ function renderizarTablaInventario() {
         const tipoBadge = prod.tipo ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-brand-600 dark:text-brand-400 border border-slate-200 dark:border-slate-700">${prod.tipo}</span>` : `-`;
         const ubicacionBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${ubicacion === 'Sin indicar' ? 'bg-slate-100 dark:bg-slate-800 text-slate-500' : 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'}">${ubicacion}</span>`;
         const estadoBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${estado === 'Nuevo' ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300' : 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300'}">${estado}</span>`;
-        
         const precioFormateado = prod.precio ? `${parseFloat(prod.precio).toFixed(2)} €` : '0.00 €';
         const fechaFormateada = prod.fechaAdicion || 'No registrada';
 
@@ -490,7 +493,7 @@ function renderizarTablaInventario() {
             <td class="py-3 px-3 font-mono text-[11px] font-bold text-slate-600 dark:text-slate-300">${prod.referencia}</td>
             <td class="py-3 px-3 font-semibold text-slate-800 dark:text-slate-200">
                 <div>${prod.nombre}</div>
-                ${prod.comentario ? `<div class="text-[10px] text-slate-400 font-normal italic mt-0.5">💬 \${prod.comentario}</div>` : ''}
+                ${prod.comentario ? `<div class="text-[10px] text-slate-400 font-normal italic mt-0.5">💬 ${prod.comentario}</div>` : ''}
             </td>
             <td class="py-3 px-3">${tipoBadge}</td>
             <td class="py-3 px-3 text-center font-bold text-emerald-600 dark:text-emerald-400">${precioFormateado}</td>
@@ -500,10 +503,10 @@ function renderizarTablaInventario() {
             <td class="py-3 px-3 text-center font-black text-brand-600 dark:text-brand-400 text-base">${prod.stock}</td>
             <td class="py-3 px-3 text-center">
                 <div class="flex items-center justify-center gap-1.5">
-                    <button onclick="window.ejecutarCambiarStock('${id}', -1)" title="Restar stock" class="w-7 h-7 bg-red-500 hover:bg-red-600 text-white rounded-lg text-xs font-black shadow transition cursor-pointer">−</button>
-                    <input type="number" min="1" value="${cantidadesFila[id] || 1}" oninput="window.guardarCantidad('${id}', this.value)" class="w-12 h-7 px-1 text-center bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-lg text-xs font-bold focus:border-brand-500 focus:outline-none">
-                    <button onclick="window.ejecutarCambiarStock('${id}', 1)" title="Sumar stock" class="w-7 h-7 bg-brand-500 hover:bg-brand-600 text-white rounded-lg text-xs font-black shadow transition cursor-pointer">+</button>
-                    <button onclick="window.ejecutarEliminar('${id}', '${prod.nombre.replace(/'/g, "\\'")}')" class="h-7 px-2.5 bg-slate-100 hover:bg-red-50 hover:text-red-600 text-slate-500 rounded-lg text-[10px] font-bold border border-slate-200 cursor-pointer">🗑️</button>
+                    <button onclick="window.ejecutarCambiarStock('${id}', -1)" title="Restar stock" class="w-7 h-7 bg-red-500 hover:bg-red-600 text-white rounded-lg text-xs font-black shadow transition">-</button>
+                    <input type="number" min="1" value="${cantidadesFila[id] || 1}" oninput="window.guardarCantidad('${id}', this.value)" class="w-12 h-7 px-1 text-center bg-slate-50 dark:bg-slate-800 rounded-md border">
+                    <button onclick="window.ejecutarCambiarStock('${id}', 1)" title="Sumar stock" class="w-7 h-7 bg-brand-500 hover:bg-brand-600 text-white rounded-lg text-xs font-black shadow transition">+</button>
+                    <button onclick="window.ejecutarEliminar('${id}', '${(prod.nombre || '').replace(/'/g, "\\'")}')" class="h-7 px-2.5 bg-slate-100 hover:bg-red-50 hover:text-red-600 text-slate-500 rounded-xl text-xs font-bold">Eliminar</button>
                 </div>
             </td>
         `;
@@ -562,15 +565,15 @@ function cargarEquiposTienda(nombreTienda) {
                 <td class="py-3 px-3"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-brand-600">${eq.tipo}</span></td>
                 <td class="py-3 px-3 font-semibold text-slate-800 dark:text-slate-200">
                     ${eq.nombre}
-                    ${eq.notas ? `<div class="text-[10px] text-slate-400 italic font-normal">\${eq.notas}</div>` : ''}
+                    ${eq.notas ? `<div class="text-[10px] text-slate-400 italic font-normal">${eq.notas}</div>` : ''}
                 </td>
                 <td class="py-3 px-3 font-mono text-[11px] font-bold text-slate-600 dark:text-slate-300">${eq.referencia}</td>
                 <td class="py-3 px-3 text-center font-bold text-emerald-600">${precio.toFixed(2)} €</td>
                 <td class="py-3 px-3 text-center text-[10px] text-slate-500">${eq.fechaInstalacion || '-'}</td>
-                <td class="py-3 px-3 text-center"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${eq.estado === 'Nuevo' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}">${eq.estado}</span></td>
+                <td class="py-3 px-3 text-center"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${eq.estado === 'Nuevo' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}">${eq.estado || 'Nuevo'}</span></td>
                 <td class="py-3 px-3 text-center font-black text-brand-600">${cantidad}</td>
                 <td class="py-3 px-3 text-center">
-                    <button onclick="window.eliminarEquipoTienda('${nombreTienda}', '${id}', '${eq.nombre.replace(/'/g, "\\'")}')" class="h-7 px-2.5 bg-slate-100 hover:bg-red-50 hover:text-red-600 text-slate-500 rounded-lg text-[10px] font-bold border border-slate-200 cursor-pointer">🗑️</button>
+                    <button onclick="window.eliminarEquipoTienda('${nombreTienda}', '${id}', '${eq.nombre.replace(/'/g, "\\'")}')" class="h-7 px-2.5 bg-slate-100 hover:bg-red-50 hover:text-red-600 text-slate-500 rounded-xl text-xs font-bold">Eliminar</button>
                 </td>
             `;
             tbody.appendChild(tr);
