@@ -310,7 +310,7 @@ function renderizarListaDispositivosModal(categoria) {
         div.className = "flex justify-between items-center bg-slate-50 dark:bg-slate-800 p-2 rounded-lg text-xs font-semibold border border-slate-200 dark:border-slate-700";
         div.innerHTML = `
             <span>${item.nombre}</span>
-            <button type="button" onclick="window.eliminarDispositivoCategoria('${categoria}', '${id}', '${item.nombre.replace(/'/g, "\\'")}')" class="text-red-500 hover:text-red-700 font-bold px-1.5 py-0.5 rounded hover:bg-red-50 dark:hover:bg-red-900/30 transition">🗑️</button>
+            <button type="button" onclick="window.eliminarDispositivoCategoria('${categoria}', '${id}', '${item.nombre.replace(/'/g, "\\'")}')" class="text-red-500 hover:text-red-700 font-bold px-2">Eliminar</button>
         `;
         container.appendChild(div);
     });
@@ -363,6 +363,138 @@ function registrarLog(accion, comentario = '') {
         console.error("Error historial:", e);
     }
 }
+
+// --- Actividad: filtros multi-usuario y multi-tipo ---
+let actividadLogsGlobal = [];
+
+/**
+ * Detecta el tipo a partir del texto del detalle del log.
+ * Devuelve uno de: 'retirada', 'anadido', 'eliminado', 'creado'
+ * (heurística basada en los textos que genera la app).
+ */
+function detectarTipoDesdeDetalle(detalle = '') {
+  const d = detalle.toLowerCase();
+  if (d.includes('salida') || d.includes('salida (-') || d.match(/salida\s*\(|salida\s*-/)) return 'retirada';
+  if (d.includes('eliminó') || d.includes('eliminado')) return 'eliminado';
+  if (d.includes('añadió') || d.includes('añadio')) return 'creado';
+  if (d.includes('entrada') || d.includes('entrada (+') || d.includes('entrada +')) return 'anadido';
+  if (d.includes('asignó') || d.includes('asigno') || d.includes('asignó equipo')) return 'creado';
+  // fallback: considerar 'anadido' si hay '+' y números, o 'creado' por defecto
+  if (d.includes('+')) return 'anadido';
+  return 'creado';
+}
+
+function poblarFiltroUsuariosActividad(usersList = []) {
+  const select = document.getElementById('userFilterActividad');
+  if (!select) return;
+  // preservar selección previa
+  const prev = Array.from(select.selectedOptions).map(o => o.value);
+  select.innerHTML = '';
+  usersList.forEach(u => {
+    const opt = document.createElement('option');
+    opt.value = u.id ?? u.name ?? u;
+    opt.textContent = u.name ?? u;
+    if (prev.includes(opt.value)) opt.selected = true;
+    select.appendChild(opt);
+  });
+}
+
+/**
+ * Intenta cargar usuarios 'dados de alta' desde la rama /usuarios de Firebase.
+ * Si no existe, crea la lista a partir de los usuarios presentes en el historial.
+ */
+function cargarUsuariosActividad() {
+  // Primero intentamos leer /usuarios
+  const usuariosRef = ref(db, 'usuarios');
+  onValue(usuariosRef, (snap) => {
+    const val = snap.val();
+    if (val && Object.keys(val).length) {
+      // esperamos estructura { id: { name, active }, ... } o { uid: { ... } }
+      const list = [];
+      Object.entries(val).forEach(([k, v]) => {
+        // si hay campo active, filtrar solo active=true
+        if (v && (v.active === undefined || v.active === true)) {
+          list.push({ id: k, name: v.name || v.nombre || k });
+        }
+      });
+      if (list.length) {
+        poblarFiltroUsuariosActividad(list);
+        return;
+      }
+    }
+    // fallback: construir desde historial
+    const setNames = new Map();
+    actividadLogsGlobal.forEach(l => {
+      if (l.usuario && !setNames.has(l.usuario)) setNames.set(l.usuario, { id: l.usuario, name: l.usuario });
+    });
+    poblarFiltroUsuariosActividad(Array.from(setNames.values()));
+  }, { onlyOnce: true });
+}
+
+function getUsuariosSeleccionadosActividad() {
+  const sel = document.getElementById('userFilterActividad');
+  if (!sel) return [];
+  return Array.from(sel.selectedOptions).map(o => o.value);
+}
+
+function getTiposSeleccionadosActividad() {
+  return Array.from(document.querySelectorAll('#tipoFiltroActividad input[name="tipoActividad"]:checked')).map(cb => cb.value);
+}
+
+function renderActividadFiltrosAplicados() {
+  const container = document.getElementById('logsContainer');
+  container.innerHTML = '';
+  if (!actividadLogsGlobal || actividadLogsGlobal.length === 0) {
+    container.innerHTML = `<p class="text-center text-slate-400 py-10 text-xs font-medium">Sin actividad.</p>`;
+    return;
+  }
+
+  const usuariosSel = getUsuariosSeleccionadosActividad(); // [] = todos
+  const tiposSel = getTiposSeleccionadosActividad(); // [] = todos (pero por defecto están todos checked)
+
+  const items = actividadLogsGlobal.filter(log => {
+    // filtrar por usuario
+    if (usuariosSel.length && !usuariosSel.includes(log.usuario)) return false;
+    // filtrar por tipo
+    if (tiposSel.length && !tiposSel.includes(log.tipo)) return false;
+    return true;
+  });
+
+  if (items.length === 0) {
+    container.innerHTML = `<p class="text-center text-slate-400 py-10 text-xs font-medium">No hay registros que coincidan con los filtros.</p>`;
+    return;
+  }
+
+  items.forEach((log) => {
+    const div = document.createElement('div');
+    div.className = "bg-brand-50/50 dark:bg-slate-800/40 p-3.5 rounded-xl border-l-4 border-brand-500 text-xs shadow-sm";
+    div.innerHTML = `
+      <div class="flex justify-between items-center mb-1">
+        <span class="font-black text-brand-700 dark:text-brand-400 uppercase tracking-wide">${log.usuario}</span>
+        <span class="text-slate-400 text-[10px]">${log.fecha}</span>
+      </div>
+      <div class="text-slate-700 dark:text-slate-300 font-medium">${log.detalle}</div>
+      <div class="text-[10px] text-slate-400 mt-1">Tipo: <strong>${log.tipo}</strong></div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+// handlers botones aplicar / limpiar
+document.addEventListener('click', (ev) => {
+  const t = ev.target;
+  if (!t) return;
+  if (t.id === 'aplicarFiltrosActividad') {
+    renderActividadFiltrosAplicados();
+  } else if (t.id === 'limpiarFiltrosActividad') {
+    // limpiar selección de usuarios
+    const sel = document.getElementById('userFilterActividad');
+    if (sel) Array.from(sel.options).forEach(o => o.selected = false);
+    // marcar todos los tipos
+    document.querySelectorAll('#tipoFiltroActividad input[name="tipoActividad"]').forEach(cb => cb.checked = true);
+    renderActividadFiltrosAplicados();
+  }
+});
 
 function abrirModalActividad() {
     document.getElementById('actividadModal').classList.remove('hidden');
@@ -477,7 +609,7 @@ function renderizarTablaInventario() {
         if (!coincideTexto || !coincideTipo || !coincideUbicacion || !coincideEstado) return;
 
         countRendered++;
-        const tipoBadge = prod.tipo ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-brand-600 dark:text-brand-400 border border-slate-200 dark:border-slate-700">${prod.tipo}</span>` : `-`;
+        const tipoBadge = prod.tipo ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-brand-600 dark:text-brand-400 border border-slate-200 dark:border-slate-700">${prod.tipo}</span>` : '';
         const ubicacionBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${ubicacion === 'Sin indicar' ? 'bg-slate-100 dark:bg-slate-800 text-slate-500' : 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'}">${ubicacion}</span>`;
         const estadoBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${estado === 'Nuevo' ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300' : 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300'}">${estado}</span>`;
         
@@ -490,7 +622,7 @@ function renderizarTablaInventario() {
             <td class="py-3 px-3 font-mono text-[11px] font-bold text-slate-600 dark:text-slate-300">${prod.referencia}</td>
             <td class="py-3 px-3 font-semibold text-slate-800 dark:text-slate-200">
                 <div>${prod.nombre}</div>
-                ${prod.comentario ? `<div class="text-[10px] text-slate-400 font-normal italic mt-0.5">💬 \${prod.comentario}</div>` : ''}
+                ${prod.comentario ? `<div class="text-[10px] text-slate-400 font-normal italic mt-0.5">💬 ${prod.comentario}</div>` : ''}
             </td>
             <td class="py-3 px-3">${tipoBadge}</td>
             <td class="py-3 px-3 text-center font-bold text-emerald-600 dark:text-emerald-400">${precioFormateado}</td>
@@ -500,10 +632,10 @@ function renderizarTablaInventario() {
             <td class="py-3 px-3 text-center font-black text-brand-600 dark:text-brand-400 text-base">${prod.stock}</td>
             <td class="py-3 px-3 text-center">
                 <div class="flex items-center justify-center gap-1.5">
-                    <button onclick="window.ejecutarCambiarStock('${id}', -1)" title="Restar stock" class="w-7 h-7 bg-red-500 hover:bg-red-600 text-white rounded-lg text-xs font-black shadow transition cursor-pointer">−</button>
-                    <input type="number" min="1" value="${cantidadesFila[id] || 1}" oninput="window.guardarCantidad('${id}', this.value)" class="w-12 h-7 px-1 text-center bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-lg text-xs font-bold focus:border-brand-500 focus:outline-none">
-                    <button onclick="window.ejecutarCambiarStock('${id}', 1)" title="Sumar stock" class="w-7 h-7 bg-brand-500 hover:bg-brand-600 text-white rounded-lg text-xs font-black shadow transition cursor-pointer">+</button>
-                    <button onclick="window.ejecutarEliminar('${id}', '${prod.nombre.replace(/'/g, "\\'")}')" class="h-7 px-2.5 bg-slate-100 hover:bg-red-50 hover:text-red-600 text-slate-500 rounded-lg text-[10px] font-bold border border-slate-200 cursor-pointer">🗑️</button>
+                    <button onclick="window.ejecutarCambiarStock('${id}', -1)" title="Restar stock" class="w-7 h-7 bg-red-500 hover:bg-red-600 text-white rounded-lg text-xs font-black shadow transition">-</button>
+                    <input type="number" min="1" value="${cantidadesFila[id] || 1}" oninput="window.guardarCantidad('${id}', this.value)" class="w-12 h-7 px-1 text-center bg-slate-50 dark:bg-slate-800 rounded-lg border">
+                    <button onclick="window.ejecutarCambiarStock('${id}', 1)" title="Sumar stock" class="w-7 h-7 bg-brand-500 hover:bg-brand-600 text-white rounded-lg text-xs font-black shadow transition">+</button>
+                    <button onclick="window.ejecutarEliminar('${id}', '${prod.nombre.replace(/'/g, "\\'")}')" class="h-7 px-2.5 bg-slate-100 hover:bg-red-50 hover:text-red-600 text-slate-500 rounded-xl text-xs">Eliminar</button>
                 </div>
             </td>
         `;
@@ -562,7 +694,7 @@ function cargarEquiposTienda(nombreTienda) {
                 <td class="py-3 px-3"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-brand-600">${eq.tipo}</span></td>
                 <td class="py-3 px-3 font-semibold text-slate-800 dark:text-slate-200">
                     ${eq.nombre}
-                    ${eq.notas ? `<div class="text-[10px] text-slate-400 italic font-normal">\${eq.notas}</div>` : ''}
+                    ${eq.notas ? `<div class="text-[10px] text-slate-400 italic font-normal">${eq.notas}</div>` : ''}
                 </td>
                 <td class="py-3 px-3 font-mono text-[11px] font-bold text-slate-600 dark:text-slate-300">${eq.referencia}</td>
                 <td class="py-3 px-3 text-center font-bold text-emerald-600">${precio.toFixed(2)} €</td>
@@ -570,7 +702,7 @@ function cargarEquiposTienda(nombreTienda) {
                 <td class="py-3 px-3 text-center"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${eq.estado === 'Nuevo' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}">${eq.estado}</span></td>
                 <td class="py-3 px-3 text-center font-black text-brand-600">${cantidad}</td>
                 <td class="py-3 px-3 text-center">
-                    <button onclick="window.eliminarEquipoTienda('${nombreTienda}', '${id}', '${eq.nombre.replace(/'/g, "\\'")}')" class="h-7 px-2.5 bg-slate-100 hover:bg-red-50 hover:text-red-600 text-slate-500 rounded-lg text-[10px] font-bold border border-slate-200 cursor-pointer">🗑️</button>
+                    <button onclick="window.eliminarEquipoTienda('${nombreTienda}', '${id}', '${eq.nombre.replace(/'/g, "\\'")}')" class="h-7 px-2.5 bg-slate-100 hover:bg-red-50 hover:text-red-600 text-slate-500 rounded-xl text-xs">Eliminar</button>
                 </td>
             `;
             tbody.appendChild(tr);
@@ -795,27 +927,36 @@ function iniciarLogica() {
         renderizarTablaInventario();
     });
 
+    // Reemplazado: escucha de 'historial' para normalizar logs y activar filtros
     onValue(ref(db, 'historial'), (snapshot) => {
-        const logsContainer = document.getElementById('logsContainer');
-        logsContainer.innerHTML = "";
-        const data = snapshot.val();
-        if (!data) {
-            logsContainer.innerHTML = `<p class="text-center text-slate-400 py-10 text-xs font-medium">Sin actividad.</p>`;
-            return;
-        }
-        const logsArray = Object.values(data).reverse().slice(0, 25);
-        logsArray.forEach((log) => {
-            const div = document.createElement('div');
-            div.className = "bg-brand-50/50 dark:bg-slate-800/40 p-3.5 rounded-xl border-l-4 border-brand-500 text-xs shadow-sm";
-            div.innerHTML = `
-                <div class="flex justify-between items-center mb-1">
-                    <span class="font-black text-brand-700 dark:text-brand-400 uppercase tracking-wide">${log.usuario}</span>
-                    <span class="text-slate-400 text-[10px]">${log.fecha}</span>
-                </div>
-                <div class="text-slate-700 dark:text-slate-300 font-medium">${log.detalle}</div>
-            `;
-            logsContainer.appendChild(div);
-        });
+      const logsContainer = document.getElementById('logsContainer');
+      logsContainer.innerHTML = "";
+      const data = snapshot.val();
+      if (!data) {
+        actividadLogsGlobal = [];
+        logsContainer.innerHTML = `<p class="text-center text-slate-400 py-10 text-xs font-medium">Sin actividad.</p>`;
+        // también poblar usuarios en caso de que no exista /usuarios
+        cargarUsuariosActividad();
+        return;
+      }
+
+      // convertir a array ordenado (más reciente primero)
+      const arr = Object.entries(data).map(([key, val]) => {
+        const tipo = detectarTipoDesdeDetalle(val.detalle || '');
+        return {
+          id: key,
+          usuario: val.usuario || 'Desconocido',
+          detalle: val.detalle || '',
+          fecha: val.fecha || '',
+          tipo
+        };
+      }).reverse(); // revertir para ver más reciente arriba
+
+      actividadLogsGlobal = arr;
+      // poblar select de usuarios (solo los dados de alta si existe /usuarios)
+      cargarUsuariosActividad();
+      // render con filtros actuales
+      renderActividadFiltrosAplicados();
     });
 }
 
