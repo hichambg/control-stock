@@ -42,7 +42,7 @@
                 <p class="text-xs font-semibold text-emerald-200 tracking-wider uppercase">Mejores Ingredientes. Mejor Pizza.</p>
             </div>
             <div class="mt-3 sm:mt-0 flex items-center gap-3">
-                <button id="darkModeBtn" class="bg-brand-900/60 hover:bg-brand-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border border-brand-600 cursor-pointer">
+                <button id="darkModeBtn" class="bg-brand-900/60 hover:bg-brand-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border border-brand-600">
                     <span id="darkModeIcon">🌙</span> Modo Oscuro
                 </button>
             </div>
@@ -60,17 +60,17 @@
             <div class="space-y-4">
                 <div>
                     <label class="block text-xs font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-2">Usuario</label>
-                    <input type="text" id="nombreUsuario" placeholder="Introduce tu usuario" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-brand-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none transition font-medium text-sm">
+                    <input type="text" id="nombreUsuario" placeholder="Introduce tu usuario" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl">
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-2">Contraseña</label>
-                    <input type="password" id="passwordUsuario" placeholder="••••••••••••" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-brand-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none transition font-medium text-sm">
+                    <input type="password" id="passwordUsuario" placeholder="••••••••••••" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl">
                 </div>
                 <div id="nombrePersonalContainer" class="hidden">
                     <label class="block text-xs font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-2">Tu Nombre (Técnico)</label>
-                    <input type="text" id="nombrePersonal" placeholder="Escribe tu nombre completo" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-brand-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none transition font-medium text-sm">
+                    <input type="text" id="nombrePersonal" placeholder="Escribe tu nombre completo" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl">
                 </div>
-                <button id="btnLogin" class="w-full py-3.5 bg-gradient-to-r from-brand-500 to-brand-700 hover:from-brand-600 hover:to-brand-800 text-white font-bold rounded-xl shadow-lg shadow-brand-500/25 transition transform active:scale-95 uppercase tracking-wider text-sm cursor-pointer">
+                <button id="btnLogin" class="w-full py-3.5 bg-gradient-to-r from-brand-500 to-brand-700 hover:from-brand-600 hover:to-brand-800 text-white font-bold rounded-xl shadow-lg">
                     Acceder al Sistema
                 </button>
                 <p id="loginError" class="text-red-500 text-xs text-center font-medium mt-2"></p>
@@ -83,7 +83,7 @@
         <div class="max-w-7xl mx-auto space-y-6">
             
             <!-- Top App Bar -->
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center bg-white/90 dark:bg-slate-900/90 backdrop-blur-md p-6 rounded-2xl shadow-xl border border-brand-500/10 gap-4">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center bg-white/90 dark:bg-slate-900/90 backdrop-blur-md p-6 rounded-2xl shadow-xl border border-brand-500/10">
                 <div>
                     <h1 class="text-3xl font-black text-brand-700 dark:text-brand-400 tracking-tight flex items-center gap-2">
                         <span>📦</span> Panel de Control
@@ -91,13 +91,13 @@
                     <p class="text-slate-500 dark:text-slate-400 text-sm mt-0.5">Gestión de inventario y equipamiento por tiendas</p>
                 </div>
                 <div class="flex flex-wrap items-center gap-3">
-                    <div class="inline-flex items-center gap-2 bg-emerald-50 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300 px-4 py-2 rounded-full border-2 border-brand-500/20 font-extrabold text-xs uppercase tracking-wider">
+                    <div class="inline-flex items-center gap-2 bg-emerald-50 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300 px-4 py-2 rounded-full border-2 border-brand-500/20 font-extrabold">
                         <span id="userDisplay">👤 Usuario</span>
                     </div>
-                    <button id="btnChangeUser" class="text-red-600 hover:text-red-700 border-2 border-red-300 hover:border-red-500 px-3 py-1.5 rounded-xl text-xs font-bold transition uppercase tracking-wider cursor-pointer">
+                    <button id="btnChangeUser" class="text-red-600 hover:text-red-700 border-2 border-red-300 hover:border-red-500 px-3 py-1.5 rounded-xl text-xs font-bold transition uppercase">
                         Cambiar
                     </button>
-                    <button id="btnExport" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition uppercase tracking-wider shadow-md flex items-center gap-1.5 cursor-pointer">
+                    <button id="btnExport" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition uppercase tracking-wider shadow-md flex items-center gap-2">
                         📥 Descargar Excel
                     </button>
                 </div>
@@ -111,7 +111,7 @@
                 <button id="tabBtnNuevo" class="px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-brand-100 hover:text-brand-700 cursor-pointer">
                     ➕ Añadir Entrada
                 </button>
-                <button id="tabBtnTiendas" class="px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-brand-100 hover:text-brand-700 cursor-pointer flex items-center gap-2">
+                <button id="tabBtnTiendas" class="px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-brand-100 hover:text-brand-700 cursor-pointer">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
                         <polyline points="9 22 9 12 15 12 15 22"/>
@@ -158,29 +158,29 @@
                     <div class="flex flex-wrap items-center gap-2">
                         <div class="relative w-full sm:w-48">
                             <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">🔍</span>
-                            <input type="text" id="searchInput" placeholder="Buscar..." class="w-full pl-9 pr-4 py-2 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium focus:border-brand-500 focus:outline-none transition">
+                            <input type="text" id="searchInput" placeholder="Buscar..." class="w-full pl-9 pr-4 py-2 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl">
                         </div>
-                        <select id="filterTipo" class="px-3 py-2 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold focus:border-brand-500 focus:outline-none transition">
+                        <select id="filterTipo" class="px-3 py-2 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold focus:border-brand-500">
                             <option value="">Todas las categorías</option>
                         </select>
-                        <select id="filterUbicacion" class="px-3 py-2 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold focus:border-brand-500 focus:outline-none transition">
+                        <select id="filterUbicacion" class="px-3 py-2 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold focus:border-brand-500">
                             <option value="">Todas las ubicaciones</option>
                             <option value="ALMACÉN">ALMACÉN</option>
                             <option value="ARMARIO">ARMARIO</option>
                         </select>
-                        <select id="filterEstado" class="px-3 py-2 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold focus:border-brand-500 focus:outline-none transition">
+                        <select id="filterEstado" class="px-3 py-2 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold focus:border-brand-500">
                             <option value="">Todos los estados</option>
                             <option value="Nuevo">Nuevo</option>
                             <option value="Usado">Usado</option>
                         </select>
-                        <button id="btnClearFilters" type="button" class="px-3 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-brand-50 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 border-2 border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold transition">↺ Limpiar</button>
+                        <button id="btnClearFilters" type="button" class="px-3 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-brand-50 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 border rounded-xl text-xs font-bold">Limpiar</button>
                     </div>
                 </div>
 
                 <div class="rounded-xl border border-slate-100 dark:border-slate-800 overflow-x-auto">
                     <table class="w-full border-collapse text-left text-xs">
                         <thead>
-                            <tr class="bg-slate-50 dark:bg-slate-800/80 text-brand-700 dark:text-brand-400 uppercase text-[10px] font-black tracking-wider border-b border-slate-200 dark:border-slate-700">
+                            <tr class="bg-slate-50 dark:bg-slate-800/80 text-brand-700 dark:text-brand-400 uppercase text-[10px] font-black tracking-wider border-b border-slate-200 dark:border-slate-800">
                                 <th class="py-3 px-3">Nº de Serie</th>
                                 <th class="py-3 px-3">Producto</th>
                                 <th class="py-3 px-3">Categoría</th>
@@ -211,7 +211,7 @@
                         
                         <div>
                             <label class="block text-xs font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-2">Categoría *</label>
-                            <select id="tipoProducto" required class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-brand-500 focus:outline-none transition text-sm font-medium">
+                            <select id="tipoProducto" required class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-brand-500">
                                 <option value="">Selecciona categoría</option>
                             </select>
                         </div>
@@ -220,33 +220,31 @@
                         <div class="flex flex-col justify-end">
                             <label class="block text-xs font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-2">Dispositivo *</label>
                             <div class="flex gap-2">
-                                <select id="nombreSelect" required class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-brand-500 focus:outline-none transition text-sm font-medium">
+                                <select id="nombreSelect" required class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-brand-500">
                                     <option value="">Selecciona categoría primero...</option>
                                 </select>
-                                <button type="button" id="btnCrearNuevoDispositivoEntrada" class="px-3 py-3 bg-emerald-100 dark:bg-emerald-900/40 hover:bg-emerald-200 text-brand-700 dark:text-brand-300 font-bold text-xs rounded-xl border border-brand-500/20 flex items-center gap-1 transition cursor-pointer whitespace-nowrap">
-                                    ➕ Nuevo
-                                </button>
+                                <button type="button" id="btnCrearNuevoDispositivoEntrada" class="px-3 py-3 bg-emerald-100 dark:bg-emerald-900/40 hover:bg-emerald-200 text-brand-700 dark:text-brand-200 rounded-xl">➕ Nuevo</button>
                             </div>
                         </div>
 
                         <div>
                             <label class="block text-xs font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-2">Nº de Serie / Ref. *</label>
-                            <input type="text" id="ref" required placeholder="Ej. SN-00123" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-brand-500 focus:outline-none transition text-sm font-medium">
+                            <input type="text" id="ref" required placeholder="Ej. SN-00123" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl">
                         </div>
 
                         <div>
                             <label class="block text-xs font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-2">Precio (€) *</label>
-                            <input type="number" id="precio" step="0.01" min="0" required placeholder="0.00" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-brand-500 focus:outline-none transition text-sm font-medium">
+                            <input type="number" id="precio" step="0.01" min="0" required placeholder="0.00" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl">
                         </div>
 
                         <div>
                             <label class="block text-xs font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-2">Cantidad Inicial *</label>
-                            <input type="number" id="stock" required min="1" value="1" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-brand-500 focus:outline-none transition text-sm font-medium">
+                            <input type="number" id="stock" required min="1" value="1" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl">
                         </div>
 
                         <div>
                             <label class="block text-xs font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-2">Ubicación *</label>
-                            <select id="ubicacionProducto" required class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-brand-500 focus:outline-none transition text-sm font-medium">
+                            <select id="ubicacionProducto" required class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-brand-500">
                                 <option value="">Selecciona ubicación</option>
                                 <option value="ALMACÉN">ALMACÉN</option>
                                 <option value="ARMARIO">ARMARIO</option>
@@ -255,7 +253,7 @@
 
                         <div>
                             <label class="block text-xs font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-2">Estado *</label>
-                            <select id="estadoProducto" required class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-brand-500 focus:outline-none transition text-sm font-medium">
+                            <select id="estadoProducto" required class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-brand-500">
                                 <option value="">Selecciona estado</option>
                                 <option value="Nuevo">Nuevo</option>
                                 <option value="Usado">Usado</option>
@@ -265,13 +263,11 @@
 
                     <div>
                         <label class="block text-xs font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-2">Comentario / Notas de Entrada (Opcional)</label>
-                        <textarea id="comentarioEntrada" rows="2" placeholder="Notas sobre la compra, proveedor, lote..." class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-brand-500 focus:outline-none transition text-sm font-medium resize-none"></textarea>
+                        <textarea id="comentarioEntrada" rows="2" placeholder="Notas sobre la compra, proveedor, lote..." class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl"></textarea>
                     </div>
 
                     <div class="flex justify-end">
-                        <button type="submit" class="px-8 py-3.5 bg-gradient-to-r from-brand-500 to-brand-700 hover:from-brand-600 hover:to-brand-800 text-white font-bold rounded-xl shadow-lg transition uppercase tracking-wider text-xs cursor-pointer">
-                            💾 Guardar en Stock
-                        </button>
+                        <button type="submit" class="px-8 py-3.5 bg-gradient-to-r from-brand-500 to-brand-700 hover:from-brand-600 hover:to-brand-800 text-white font-bold rounded-xl shadow-lg">💾 Guardar en Stock</button>
                     </div>
                 </form>
             </div>
@@ -279,10 +275,10 @@
             <!-- PESTAÑA 3: GESTIÓN DE TIENDAS -->
             <div id="tabTiendasSection" class="hidden space-y-6">
                 <!-- Selector de Tienda y Métricas -->
-                <div class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-2xl p-6 shadow-xl border border-brand-500/15 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-2xl p-6 shadow-xl border border-brand-500/15 flex flex-col md:flex-row justify-between items-start md:items-center">
                     <div class="w-full md:w-1/2">
                         <label class="block text-xs font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-2">Seleccionar Tienda</label>
-                        <select id="selectTiendaModulo" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-brand-500 focus:outline-none transition font-bold text-sm">
+                        <select id="selectTiendaModulo" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-brand-500">
                             <option value="">Selecciona una tienda corporativa...</option>
                         </select>
                     </div>
@@ -300,14 +296,12 @@
 
                 <!-- Formulario Añadir Equipo a Tienda -->
                 <div class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-2xl p-6 shadow-xl border border-brand-500/10">
-                    <h4 class="text-md font-extrabold text-brand-700 dark:text-brand-400 mb-4 flex items-center gap-2">
-                        <span>➕</span> Asignar Nuevo Equipo a Tienda
-                    </h4>
+                    <h4 class="text-md font-extrabold text-brand-700 dark:text-brand-400 mb-4 flex items-center gap-2">➕ Asignar Nuevo Equipo a Tienda</h4>
                     <form id="tiendaForm" class="space-y-4">
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                             <div>
                                 <label class="block text-[11px] font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-1">Categoría *</label>
-                                <select id="tiendaTipo" required class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium focus:border-brand-500 focus:outline-none">
+                                <select id="tiendaTipo" required class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium">
                                     <option value="">Categoría</option>
                                 </select>
                             </div>
@@ -315,52 +309,48 @@
                             <!-- Dispositivo en Tiendas (Botón eliminado) -->
                             <div class="sm:col-span-2 flex flex-col justify-end">
                                 <label class="block text-[11px] font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-1">Dispositivo *</label>
-                                <select id="tiendaNombreSelect" required class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium focus:border-brand-500 focus:outline-none">
+                                <select id="tiendaNombreSelect" required class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium">
                                     <option value="">Selecciona categoría primero...</option>
                                 </select>
                             </div>
 
                             <div>
                                 <label class="block text-[11px] font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-1">Nº de Serie / Ref. *</label>
-                                <input type="text" id="tiendaRef" required placeholder="Ej. SN-00123" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium focus:border-brand-500 focus:outline-none">
+                                <input type="text" id="tiendaRef" required placeholder="Ej. SN-00123" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl">
                             </div>
                             <div>
                                 <label class="block text-[11px] font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-1">Precio (€) *</label>
-                                <input type="number" id="tiendaPrecio" step="0.01" min="0" required placeholder="0.00" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium focus:border-brand-500 focus:outline-none">
+                                <input type="number" id="tiendaPrecio" step="0.01" min="0" required placeholder="0.00" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl">
                             </div>
                             <div>
                                 <label class="block text-[11px] font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-1">Cantidad *</label>
-                                <input type="number" id="tiendaCantidad" min="1" value="1" required class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium focus:border-brand-500 focus:outline-none">
+                                <input type="number" id="tiendaCantidad" min="1" value="1" required class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl">
                             </div>
                             <div>
                                 <label class="block text-[11px] font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-1">Estado *</label>
-                                <select id="tiendaEstado" required class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium focus:border-brand-500 focus:outline-none">
+                                <select id="tiendaEstado" required class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium">
                                     <option value="Nuevo">Nuevo</option>
                                     <option value="Usado">Usado</option>
                                 </select>
                             </div>
                             <div class="sm:col-span-2">
                                 <label class="block text-[11px] font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-1">Observaciones / Ubicación en Tienda</label>
-                                <input type="text" id="tiendaNotas" placeholder="Ej. TPV Caja 1, Cocina..." class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium focus:border-brand-500 focus:outline-none">
+                                <input type="text" id="tiendaNotas" placeholder="Ej. TPV Caja 1, Cocina..." class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl">
                             </div>
                         </div>
                         <div class="flex justify-end">
-                            <button type="submit" class="px-6 py-2.5 bg-gradient-to-r from-brand-500 to-brand-700 hover:from-brand-600 hover:to-brand-800 text-white font-bold rounded-xl shadow-md text-xs uppercase tracking-wider cursor-pointer">
-                                ➕ Añadir Dispositivo a Tienda
-                            </button>
+                            <button type="submit" class="px-6 py-2.5 bg-gradient-to-r from-brand-500 to-brand-700 hover:from-brand-600 hover:to-brand-800 text-white font-bold rounded-xl shadow-md">➕ Añadir Dispositivo a Tienda</button>
                         </div>
                     </form>
                 </div>
 
                 <!-- Tabla Dispositivos Tienda -->
                 <div class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-2xl p-5 shadow-xl border border-brand-500/15">
-                    <h4 id="tiendaTituloTabla" class="text-md font-extrabold text-brand-700 dark:text-brand-400 mb-4">
-                        📋 Equipos Instalados en Tienda
-                    </h4>
+                    <h4 id="tiendaTituloTabla" class="text-md font-extrabold text-brand-700 dark:text-brand-400 mb-4">📋 Equipos Instalados en Tienda</h4>
                     <div class="rounded-xl border border-slate-100 dark:border-slate-800 overflow-x-auto">
                         <table class="w-full border-collapse text-left text-xs">
                             <thead>
-                                <tr class="bg-slate-50 dark:bg-slate-800/80 text-brand-700 dark:text-brand-400 uppercase text-[10px] font-black tracking-wider border-b border-slate-200 dark:border-slate-700">
+                                <tr class="bg-slate-50 dark:bg-slate-800/80 text-brand-700 dark:text-brand-400 uppercase text-[10px] font-black tracking-wider border-b border-slate-200 dark:border-slate-800">
                                     <th class="py-3 px-3">Categoría</th>
                                     <th class="py-3 px-3">Dispositivo</th>
                                     <th class="py-3 px-3">Nº Serie</th>
@@ -385,10 +375,34 @@
                     <h3 class="text-lg font-extrabold text-brand-700 dark:text-brand-400 flex items-center gap-2">
                         <span>⚡</span> Registro de Actividad y Cambios
                     </h3>
-                    <button id="btnClearLogs" class="text-xs bg-slate-100 dark:bg-slate-800 hover:bg-red-100 hover:text-red-600 text-slate-500 px-3 py-1.5 rounded-xl font-bold transition uppercase tracking-wide cursor-pointer border border-slate-200 dark:border-slate-700">
-                        🗑️ Limpiar Historial
-                    </button>
+                    <button id="btnClearLogs" class="text-xs bg-slate-100 dark:bg-slate-800 hover:bg-red-100 hover:text-red-600 text-slate-500 px-3 py-1.5 rounded-xl font-bold uppercase">🗑️ Limpiar Historial</button>
                 </div>
+
+                <!-- FILTROS DE ACTIVIDAD -->
+                <div id="actividad-filtros" class="flex flex-wrap items-center gap-3 mb-4">
+                    <div class="flex flex-col">
+                        <label class="text-[11px] font-bold text-slate-500 mb-1">Usuarios (selecciona varios)</label>
+                        <select id="userFilterActividad" multiple size="4" class="px-3 py-2 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl text-xs">
+                            <!-- opciones cargadas dinámicamente -->
+                        </select>
+                    </div>
+
+                    <div class="flex flex-col">
+                        <label class="text-[11px] font-bold text-slate-500 mb-1">Tipo de actividad</label>
+                        <div id="tipoFiltroActividad" class="flex gap-2 items-center">
+                            <label class="text-xs"><input type="checkbox" name="tipoActividad" value="retirada" checked> Retirada</label>
+                            <label class="text-xs"><input type="checkbox" name="tipoActividad" value="anadido" checked> Producto añadido</label>
+                            <label class="text-xs"><input type="checkbox" name="tipoActividad" value="eliminado" checked> Producto eliminado</label>
+                            <label class="text-xs"><input type="checkbox" name="tipoActividad" value="creado" checked> Producto creado</label>
+                        </div>
+                    </div>
+
+                    <div class="flex items-end gap-2">
+                        <button id="aplicarFiltrosActividad" class="px-3 py-2 bg-brand-600 text-white text-xs font-bold rounded-xl">Aplicar</button>
+                        <button id="limpiarFiltrosActividad" class="px-3 py-2 bg-slate-100 dark:bg-slate-800 text-xs font-bold rounded-xl">Limpiar</button>
+                    </div>
+                </div>
+
                 <div id="logsContainer" class="space-y-3">
                     <p class="text-center text-slate-400 py-10 text-xs font-medium">Sin actividad reciente.</p>
                 </div>
@@ -407,8 +421,8 @@
             <p class="text-xs text-slate-500 dark:text-slate-400 mb-4 font-medium">Añade o elimina dispositivos disponibles para esta categoría.</p>
             
             <div class="flex gap-2 mb-4">
-                <input type="text" id="inputNuevoNombreDispositivo" placeholder="Escribe nuevo dispositivo..." class="flex-1 px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-brand-500 focus:outline-none text-xs font-medium">
-                <button type="button" id="btnGuardarNuevoDispositivo" class="px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl text-xs uppercase shadow-md transition cursor-pointer">Guardar</button>
+                <input type="text" id="inputNuevoNombreDispositivo" placeholder="Escribe nuevo dispositivo..." class="flex-1 px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 rounded-xl">
+                <button type="button" id="btnGuardarNuevoDispositivo" class="px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl text-xs uppercase shadow-md">Guardar</button>
             </div>
 
             <div class="border-t border-slate-100 dark:border-slate-800 pt-3">
@@ -419,7 +433,7 @@
             </div>
 
             <div class="flex justify-end gap-2 mt-5">
-                <button type="button" id="btnCancelarNuevoDispositivo" class="px-4 py-2 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold rounded-xl text-xs uppercase transition cursor-pointer">Cerrar</button>
+                <button type="button" id="btnCancelarNuevoDispositivo" class="px-4 py-2 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold rounded-xl text-xs uppercase">Cerrar</button>
             </div>
         </div>
     </div>
@@ -433,19 +447,19 @@
             <div class="space-y-4">
                 <div>
                     <label class="block text-xs font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-2">Motivo del Descuento</label>
-                    <textarea id="comentarioDescuento" rows="3" placeholder="Explica el motivo..." class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-brand-500 focus:outline-none transition text-sm font-medium resize-none"></textarea>
+                    <textarea id="comentarioDescuento" rows="3" placeholder="Explica el motivo..." class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl"></textarea>
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-2">Tienda Destino</label>
-                    <select id="tiendaDestino" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-brand-500 focus:outline-none transition text-sm font-medium">
+                    <select id="tiendaDestino" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-brand-500">
                         <option value="">Selecciona una tienda</option>
                     </select>
                 </div>
             </div>
 
             <div class="flex gap-3 justify-end mt-6">
-                <button id="btnCancelModal" class="px-5 py-2.5 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 font-bold text-slate-700 dark:text-slate-200 rounded-xl text-xs uppercase tracking-wider transition cursor-pointer">Cancelar</button>
-                <button id="btnConfirmModal" class="px-6 py-2.5 bg-gradient-to-r from-brand-500 to-brand-700 hover:from-brand-600 hover:to-brand-800 text-white font-bold rounded-xl text-xs uppercase tracking-wider shadow-md transition cursor-pointer">Confirmar Salida</button>
+                <button id="btnCancelModal" class="px-5 py-2.5 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 font-bold text-slate-700 dark:text-slate-200 rounded-xl">Cancelar</button>
+                <button id="btnConfirmModal" class="px-6 py-2.5 bg-gradient-to-r from-brand-500 to-brand-700 hover:from-brand-600 hover:to-brand-800 text-white font-bold rounded-xl text-xs uppercase">Confirmar</button>
             </div>
         </div>
     </div>
@@ -459,7 +473,7 @@
             <h3 class="text-2xl font-black text-slate-800 dark:text-slate-100 mb-2">¿Estás seguro?</h3>
             <p id="eliminarModalProducto" class="rounded-xl bg-slate-50 dark:bg-slate-800 px-4 py-3 font-black text-slate-800 dark:text-slate-100 text-sm mb-6"></p>
             <div class="flex gap-3 justify-center">
-                <button id="btnCancelarEliminar" type="button" class="flex-1 px-5 py-3 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-xl text-xs uppercase tracking-wider font-bold">Cancelar</button>
+                <button id="btnCancelarEliminar" type="button" class="flex-1 px-5 py-3 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-xl text-xs uppercase tracking-wide">Cancelar</button>
                 <button id="btnConfirmarEliminar" type="button" class="flex-1 px-5 py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl text-xs uppercase tracking-wider font-bold shadow-lg">Sí, eliminar</button>
             </div>
         </div>
