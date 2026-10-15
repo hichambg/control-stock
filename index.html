@@ -378,28 +378,35 @@
                     <button id="btnClearLogs" class="text-xs bg-slate-100 dark:bg-slate-800 hover:bg-red-100 hover:text-red-600 text-slate-500 px-3 py-1.5 rounded-xl font-bold uppercase">🗑️ Limpiar Historial</button>
                 </div>
 
-                <!-- FILTROS DE ACTIVIDAD -->
-                <div id="actividad-filtros" class="flex flex-wrap items-center gap-3 mb-4">
-                    <div class="flex flex-col">
-                        <label class="text-[11px] font-bold text-slate-500 mb-1">Usuarios (selecciona varios)</label>
-                        <select id="userFilterActividad" multiple size="4" class="px-3 py-2 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl text-xs">
-                            <!-- opciones cargadas dinámicamente -->
-                        </select>
-                    </div>
-
-                    <div class="flex flex-col">
-                        <label class="text-[11px] font-bold text-slate-500 mb-1">Tipo de actividad</label>
-                        <div id="tipoFiltroActividad" class="flex gap-2 items-center">
-                            <label class="text-xs"><input type="checkbox" name="tipoActividad" value="retirada" checked> Retirada</label>
-                            <label class="text-xs"><input type="checkbox" name="tipoActividad" value="anadido" checked> Producto añadido</label>
-                            <label class="text-xs"><input type="checkbox" name="tipoActividad" value="eliminado" checked> Producto eliminado</label>
-                            <label class="text-xs"><input type="checkbox" name="tipoActividad" value="creado" checked> Producto creado</label>
+                <!-- FILTROS DE ACTIVIDAD: nueva UI más clara -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-start mb-4">
+                    <!-- Usuarios: lista con búsqueda y checkboxes -->
+                    <div class="col-span-1 bg-slate-50 dark:bg-slate-800 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
+                        <label class="text-[12px] font-bold text-slate-600 dark:text-slate-300 mb-2 block">Usuarios (selecciona varios)</label>
+                        <input id="userFilterSearch" type="search" placeholder="Buscar usuario..." class="w-full px-3 py-2 mb-3 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-sm">
+                        <div id="userFilterActividadContainer" class="max-h-44 overflow-y-auto space-y-1 pr-2">
+                            <!-- checkboxes generados dinámicamente -->
                         </div>
+                        <p class="text-[11px] text-slate-400 mt-2">Solo aparecen usuarios dados de alta o los que aparecen en registros.</p>
                     </div>
 
-                    <div class="flex items-end gap-2">
-                        <button id="aplicarFiltrosActividad" class="px-3 py-2 bg-brand-600 text-white text-xs font-bold rounded-xl">Aplicar</button>
-                        <button id="limpiarFiltrosActividad" class="px-3 py-2 bg-slate-100 dark:bg-slate-800 text-xs font-bold rounded-xl">Limpiar</button>
+                    <!-- Tipos: botones/pills -->
+                    <div class="col-span-1 bg-slate-50 dark:bg-slate-800 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
+                        <label class="text-[12px] font-bold text-slate-600 dark:text-slate-300 mb-2 block">Tipo de actividad</label>
+                        <div id="tipoFiltroActividad" class="flex flex-wrap gap-2">
+                            <button data-value="retirada" class="tipo-pill px-3 py-1 rounded-full bg-red-50 text-red-600 border border-red-100 text-sm">Retirada</button>
+                            <button data-value="anadido" class="tipo-pill px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100 text-sm">Producto añadido</button>
+                            <button data-value="eliminado" class="tipo-pill px-3 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-100 text-sm">Producto eliminado</button>
+                            <button data-value="creado" class="tipo-pill px-3 py-1 rounded-full bg-sky-50 text-sky-700 border border-sky-100 text-sm">Producto creado</button>
+                        </div>
+                        <p class="text-[11px] text-slate-400 mt-2">Selecciona varios tipos haciendo clic en las etiquetas.</p>
+                    </div>
+
+                    <!-- Acciones: aplicar/limpiar -->
+                    <div class="col-span-1 flex flex-col gap-2 justify-center">
+                        <button id="aplicarFiltrosActividad" class="w-full px-4 py-2 bg-brand-600 text-white rounded-xl font-bold">Aplicar filtros</button>
+                        <button id="limpiarFiltrosActividad" class="w-full px-4 py-2 bg-slate-100 dark:bg-slate-800 rounded-xl font-bold">Limpiar</button>
+                        <div id="actividadSummary" class="text-xs text-slate-500 mt-2 text-center">Mostrando últimos 25 registros</div>
                     </div>
                 </div>
 
